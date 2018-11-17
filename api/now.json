@@ -1,0 +1,8 @@
+{
+	"version": 2,
+	"name": "python",
+	"builds": [
+		{ "src": "*.py", "use": "@now/python" },
+		{ "src": "comments/*.py", "use": "@now/python" }
+	]
+}

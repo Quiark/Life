@@ -1,0 +1,6 @@
+env
+ui/node_modules
+api/__pycache__
+.ipynb_checkpoints
+api/lib/__pycache__
+runtime
