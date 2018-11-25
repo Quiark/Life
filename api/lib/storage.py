@@ -2,7 +2,6 @@ import os
 from os.path import join
 import config
 
-# imitates boto3 s3 api
 class LocalStorage:
     def __init__(self):
         self.path = config.LOCAL_STORAGE
@@ -15,3 +14,7 @@ class LocalStorage:
         with open(fullpath, 'w') as it:
             it.write(Body)
 
+    def get_object(self, Key) -> bytes:
+        fullpath = join(self.path, Key)
+        with open(fullpath) as it:
+            return it.read()

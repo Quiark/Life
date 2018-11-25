@@ -1,18 +1,8 @@
-import sys
-from http.server import BaseHTTPRequestHandler
+import lib.http
 
-class handler(BaseHTTPRequestHandler):
+class ActualHandler:
+    def get(self):
+        return {'note': 'totally added a comment'}
 
-	def do_GET(self):
-		self.send_response(200)
-		self.send_header('Content-type', 'text/plain')
-		self.end_headers()
-		self.wfile.write(str("version: {}".format(sys.version)).encode())
-		return
-
-	def do_PUT(self):
-		self.send_response(200)
-		self.send_header('Content-type', 'text/plain')
-		self.end_headers()
-		self.wfile.write(str('pretend we added a comment').encode())
-		return
+class handler(lib.http.GenericHandler):
+    actual = ActualHandler()

@@ -20,3 +20,33 @@ HTML fragments similarly using the same strategy.
 ## Actual secure phase
 
 Use signed cookies with CloudFront
+
+# Architecture
+
+Static files served from S3, including post HTML fragments and opening page.
+
+API served from now.sh
+
+# API calls
+
+display main page
+  - get list of groups from current user
+  - (later) each group should have display name and color or icon
+
+display group
+  - get list of pages (months) 
+	- in group metadata, at least year-wise
+  - get list of posts in month
+    - in S3 (201811.json) -> 2 reqs to update, not atomic
+
+create post
+  - take picture
+  - resize
+  - add to page index
+  - allow editing text
+  - add to database
+
+append comment
+  - some kind of ID for post
+  - update item in database
+

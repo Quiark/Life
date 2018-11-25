@@ -2,9 +2,10 @@
     "compilerOptions": {
         "outDir": "./dist/",
         "sourceMap": true,
-        "noImplicitAny": true,
+        "noImplicitAny": false,
         "module": "commonjs",
         "target": "es5",
+        "lib": ["es2015", "DOM", "ES5", "ScriptHost"],
         "jsx": "react"
     },
     "include": [

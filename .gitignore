@@ -4,3 +4,5 @@ api/__pycache__
 .ipynb_checkpoints
 api/lib/__pycache__
 runtime
+api/lib/.mypy_cache
+bundle.js.map
