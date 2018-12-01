@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+from typing import List, Dict
 from dataclasses import dataclass
 
 # this is as stored in DynamoDB
@@ -25,4 +25,19 @@ class Post:
     def page(self) -> str:
         return self.postid[:6]
 
+@dataclass
+class Group:
+    groupid: str
 
+    # pageid -> next id of post
+    # pageid is 201804 for april of 2018
+    pages: Dict[str, int]
+
+    colour: str = 'blue'
+
+@dataclass
+class User:
+    userid: str
+    name: str
+
+    groups: List[Group]

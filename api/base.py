@@ -1,5 +1,6 @@
 import json
-from jinja2 import Template
+# TODO remove jinja2 from lambda installation
+# from jinja2 import Template
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 import config
 from lib.storage import LocalStorage
@@ -14,7 +15,7 @@ jinja = Environment(
 storage = LocalStorage()
 db = MockDatabase()
 
-pc = PostCreator(jinja, storage, db, db.p1)
+#pc = PostCreator(jinja, storage, db, db.p1)
 
 
 # export config to javascript

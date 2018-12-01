@@ -6,3 +6,4 @@ api/lib/__pycache__
 runtime
 api/lib/.mypy_cache
 bundle.js.map
+ui/dist

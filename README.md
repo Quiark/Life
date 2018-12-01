@@ -17,4 +17,8 @@ This software is
 npm install
 cd ui
 ./node_modules/webpack-cli/bin/cli.js
+./node_modules/webpack-dev-server/bin/webpack-dev-server.js
+
+cd api
+../env/bin/python use_flask.py
 ```
