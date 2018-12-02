@@ -58,8 +58,15 @@ class MockDatabase(Database):
             text='The other post'
         )
 
+        self.mock_post(self.g2, '201701')
+        self.mock_post(self.g2, '201702')
+        self.mock_post(self.g2, '201704')
+        self.mock_post(self.g2, '201704')
+        self.mock_post(self.g1, '201601')
+
         self.add_post(self.p1)
         self.add_post(self.p2)
+        self.add_comment(self.g1.groupid, self.p1.postid, Comment(ix=None, author='admin', text='autocommnt'))
 
     def add_group(self, data: Group):
         self.groups[data.groupid] = data
@@ -85,6 +92,14 @@ class MockDatabase(Database):
         # store post itself
         self.posts[data.postid] = data
 
+    def mock_post(self, group: Group, page: str):
+        post = Post(
+                groupid=group.groupid,
+                postid=page + '0000',
+                comments=[],
+                time=datetime.now(),
+                text='Mock post, sorry if duplicate id')
+        self.posts[post.postid] = post
 
     def get_post(self, postid: str) -> Post:
         return self.posts[postid]
@@ -95,3 +110,9 @@ class MockDatabase(Database):
 
     def get_user(self, userid):
         return self.users[userid]
+
+    def add_comment(self, groupid: str, postid: str, comment: Comment):
+        p = self.posts[postid]
+        # TODO not sure if need to maintain ix
+        comment.ix = len(p.comments)
+        p.comments.append(comment)

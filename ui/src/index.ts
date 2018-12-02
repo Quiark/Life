@@ -3,27 +3,11 @@ import Vue from "vue";
 import 'whatwg-fetch';
 
 import './styles/main.scss';
-import * as config from './config.js'
+import { Post, Group, Comment, User } from './common'
+import { api, api_post, file_api, file_html } from './common'
 import './group-pagination'
 import './post-full'
 
-// TODO autogenerate
-type Post = object
-type Group = object
-type Comment = object
-type User = object
-
-function api(path: string): Promise<any> {
-	return fetch(config.API_BASE + path).then((it) => it.json())
-}
-
-function file_api(path: string): Promise<any> {
-	return fetch(config.STORAGE_PREFIX + path).then((it) => it.json())
-}
-
-function file_html(path: string): Promise<string> {
-	return fetch(config.STORAGE_PREFIX + path).then((it) => it.text())
-}
 
 // Tabbed container of groups
 let v = new Vue({
@@ -41,14 +25,14 @@ let v = new Vue({
 			</ul>
 		</div>
 		<div class="group-content">
+			<group-pagination v-bind:pages="groupObj.pages" v-model="currentPage" />
+
 			<post-full 
 				v-for="p in content"
 				v-bind:key="p.postid"
 				v-bind:obj="p">
 			</post-full>
 
-			{{ currentPage }}
-			<group-pagination v-bind:pages="groupObj.pages" v-model="currentPage" />
 		</div>
 	</div>
 	`,
@@ -68,8 +52,8 @@ let v = new Vue({
 		this.getUser().then(function(it) {
 			vm.user = it
 			vm.groups = it.groups
+			vm.current = it.groups[0]
 		})
-		this.current = this.groups[0]
 	},
 
 	watch: {
@@ -89,7 +73,7 @@ let v = new Vue({
 
 	methods: {
 		getContent: function(group, page) {
-			return api(`groups/${ group }/posts/${ page }`)
+			return api(`groups/${ group }/page/${ page }`)
 		},
 		getGroup: function(gr) {
 			return api(`groups/${ gr }`)
