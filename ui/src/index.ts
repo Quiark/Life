@@ -61,7 +61,7 @@ let v = new Vue({
 			let vm = this
 			this.getGroup(this.current).then(function(it) {
 				// caveat: Vue converts the object into something that only supports the [] operation
-				let head = _(it.pages).keys().head()
+				let head = _(it.pages).keys().maxBy((i) => parseInt(i))
 				vm.groupObj = it
 				vm.currentPage = head
 			})

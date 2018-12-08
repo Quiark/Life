@@ -29,7 +29,9 @@ Vue.component('post-full', {
 				</div>
             </div>
             <footer class="card-footer">
-                {{ obj.time }}
+				<a v-bind:href="posturl">
+					{{ obj.time }}
+				</a>
             </footer>
         </div>
     `,
@@ -41,7 +43,10 @@ Vue.component('post-full', {
     computed: {
         imgurl: function() {
             return config.STORAGE_PREFIX + this.obj.groupid + '/' + this.obj.postid + '.jpg'
-        }
+		},
+		posturl: function() {
+			return `/ui/groups/${ this.obj.groupid }/posts/${ this.obj.postid }`
+		}
 	},
 
 	methods: {

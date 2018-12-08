@@ -27,3 +27,19 @@ $primary-invert: $pink-invert;
 */
 
 @import "../../node_modules/bulma/bulma";
+
+#group-pagination {
+    margin: 1ex 0ex;
+}
+
+.life-comment {
+    margin-bottom: 0.5rem !important;
+
+    .message-body {
+        padding: 0.5rem;
+    }
+
+    .comment-meta {
+        font-size: 80%;
+    }
+}

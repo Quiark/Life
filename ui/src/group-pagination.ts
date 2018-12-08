@@ -5,7 +5,7 @@ let MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oc
 
 Vue.component('group-pagination', {
     template: `
-        <nav class="pagination" role="navigation" aria-label="pagination">
+        <nav id="group-pagination" class="pagination" role="navigation" aria-label="pagination">
             <!-- <a class="pagination-previous">Previous</a>
             <a class="pagination-next">Next page</a> -->
             <ul class="pagination-list" v-for="page in pagenames">
