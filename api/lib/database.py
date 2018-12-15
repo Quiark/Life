@@ -1,15 +1,34 @@
-from typing import List, Dict
+from typing import List, Dict, Optional
 from datetime import datetime
 import config
 from lib.data import Comment, Post, Group, User
 
 # TODO: use the abc module
+# store_X: just saves the thing in the database
+# add_X: possibly does some further processing such as generating next id etc
 class Database:
     
-    def add_post(self, data: Post):
+    def get_post(self, groupid: str, postid: str) -> Optional[Post]:
         pass
 
-    def get_post(self, postid: str) -> Post:
+    def add_post(self, data: Post):
+        now = datetime.utcnow()
+        page = '{:04}{:02}'.format(now.year, now.month)
+
+        # next
+        ix = self._inc_postix(data.groupid, page)
+
+        # figure out new id
+        data.postid = '{}{:04}'.format(page, ix)
+
+        self._store_post(data)
+
+    # internal interface
+    def _store_post(self, data: Post):
+        pass
+
+
+    def _inc_postix(self, groupid: str, page: str) -> int:
         pass
 
 
@@ -74,21 +93,12 @@ class MockDatabase(Database):
     def get_group(self, groupid: str) -> Group:
         return self.groups[groupid]
 
-    def inc_postix(self, groupid: str, page: str) -> int:
+    def _inc_postix(self, groupid: str, page: str) -> int:
         ix = self.groups[groupid].pages.setdefault(page, 0)
         self.groups[groupid].pages[page] += 1
         return ix
 
-    def add_post(self, data: Post):
-        now = datetime.utcnow()
-        page = '{:04}{:02}'.format(now.year, now.month)
-
-        # next
-        ix = self.inc_postix(data.groupid, page)
-
-        # figure out new id
-        data.postid = '{}{:04}'.format(page, ix)
-
+    def _store_post(self, data: Post):
         # store post itself
         self.posts[data.postid] = data
 
@@ -101,7 +111,7 @@ class MockDatabase(Database):
                 text='Mock post, sorry if duplicate id')
         self.posts[post.postid] = post
 
-    def get_post(self, postid: str) -> Post:
+    def get_post(self, groupid: str, postid: str) -> Post:
         return self.posts[postid]
 
     def get_posts_by_page(self, groupid: str, page: str) -> List[Post]:

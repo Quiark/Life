@@ -2,7 +2,7 @@ import * as _ from "lodash"
 import Vue from "vue"
 
 import { api, api_post, file_api, file_html } from './common'
-import { Post, Group, Comment, User } from './common'
+import { Post, Group, Comment, User } from './data'
 import * as config from './config.js'
 import './comment-list'
 

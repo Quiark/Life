@@ -37,7 +37,6 @@ display group
   - get list of pages (months) 
 	- in group metadata, at least year-wise
   - get list of posts in month
-    - in S3 (201811.json) -> 2 reqs to update, not atomic
 
 create post
   - take picture
@@ -50,3 +49,13 @@ append comment
   - some kind of ID for post
   - update item in database
 
+# DynamoDB tables design
+
+## Posts ##
+
+operations
+* add post: increment in-page ix
+* get,update post by groupid + postid
+* get posts by groupid + page 
+
+Access pattern: pretty much only the last page (month).

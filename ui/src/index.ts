@@ -3,7 +3,7 @@ import Vue from "vue";
 import 'whatwg-fetch';
 
 import './styles/main.scss';
-import { Post, Group, Comment, User } from './common'
+import { Post, Group, Comment, User } from './data'
 import { api, api_post, file_api, file_html } from './common'
 import './group-pagination'
 import './post-full'

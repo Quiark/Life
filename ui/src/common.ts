@@ -1,10 +1,5 @@
 import * as config from './config.js'
 
-// TODO autogenerate
-export type Post = object
-export type Group = object
-export type Comment = object
-export type User = object
 
 export function api(path: string): Promise<any> {
 	return fetch(config.API_BASE + path).then((it) => it.json())

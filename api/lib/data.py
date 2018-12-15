@@ -14,8 +14,11 @@ class Comment:
 # TODO what are the keys and what are the indexes?
 @dataclass
 class Post:
+    # PARTITION KEY: groupid + postid
+    # SORT KEY: postid
     groupid: str
     # refers to image on S3 but not gettable by id
+    # unique within the group
     postid: str
     # yes?
     text: str
@@ -24,6 +27,14 @@ class Post:
 
     def page(self) -> str:
         return self.postid[:6]
+
+    def partitionid(self) -> str:
+        return Post_partition_id(self.groupid, self.postid)
+
+
+def Post_partition_id(groupid, postid) -> str:
+    return groupid + postid[:6]
+
 
 @dataclass
 class Group:
@@ -37,7 +48,7 @@ class Group:
 
 @dataclass
 class User:
-    userid: str
+    id: str
     name: str
 
     groups: List[Group]
