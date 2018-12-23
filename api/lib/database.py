@@ -36,10 +36,10 @@ class MockDatabase(Database):
     def __init__(self):
         self.posts = {}
         self.groups = {}
-        self.users = {'admin': User('admin', 'Adminus', [
+        self.users = {'admin': User('admin', 'Adminus', groups=[
             config.FIRST_GROUP,
             'bugcp-kungfu'
-            ])}
+            ], token='abcd_kocka_heslo')}
 
         self.g1 = Group(
                 groupid=config.FIRST_GROUP,
@@ -85,7 +85,7 @@ class MockDatabase(Database):
 
         self.add_post(self.p1)
         self.add_post(self.p2)
-        self.add_comment(self.g1.groupid, self.p1.postid, Comment(ix=None, author='admin', text='autocommnt'))
+        self.add_comment(self.g1.groupid, self.p1.postid, Comment(author='admin', text='autocommnt'))
 
     def add_group(self, data: Group):
         self.groups[data.groupid] = data
@@ -123,6 +123,4 @@ class MockDatabase(Database):
 
     def add_comment(self, groupid: str, postid: str, comment: Comment):
         p = self.posts[postid]
-        # TODO not sure if need to maintain ix
-        comment.ix = len(p.comments)
         p.comments.append(comment)

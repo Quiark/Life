@@ -4,7 +4,7 @@ import 'whatwg-fetch';
 
 import './styles/main.scss';
 import { Post, Group, Comment, User } from './data'
-import { api, api_post, file_api, file_html } from './common'
+import { api, api_post, file_api, file_html, read_login } from './common'
 import './group-pagination'
 import './post-full'
 
@@ -48,6 +48,7 @@ let v = new Vue({
 	},
 
 	mounted: function() {
+        read_login()
 		let vm = this
 		this.getUser().then(function(it) {
 			vm.user = it

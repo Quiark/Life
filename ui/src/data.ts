@@ -1,8 +1,7 @@
 export interface Comment {
-	ix: number;
 	author: string;
 	text: string;
-	time: number;
+	time: string;
 }
 
 export interface Post {
@@ -10,12 +9,13 @@ export interface Post {
 	postid: string;
 	text: string;
 	comments: Array<Comment>;
-	time: number;
+	time: string;
 }
 
 export interface User {
 	id: string;
 	name: string;
+	token: string;
 	groups: Array<Group>;
 }
 

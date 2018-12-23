@@ -1,12 +1,11 @@
 from datetime import datetime
-from typing import List, Dict
+from typing import List, Dict, Optional
 from dataclasses import dataclass
 
 # this is as stored in DynamoDB
 
 @dataclass
 class Comment:
-    ix: int
     author: str
     text: str
     time: datetime = datetime.utcnow()
@@ -50,5 +49,11 @@ class Group:
 class User:
     id: str
     name: str
+    token: str
 
     groups: List[Group]
+
+@dataclass
+class LifeApp:
+    user: Optional[User]
+    inited: bool  # only for the user attribute actually

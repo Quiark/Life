@@ -20,6 +20,8 @@ def entity_from_typed(obj: Dict, cls: type):
     map = _from_typed(obj, cls)
     if cls is Post:
         del map['partitionid']
+    elif cls is Comment:
+        if 'ix' in map: del map['ix']
     return cls(**map)
 
 def _from_item_typed(v: Dict, typ: Optional[type]):
@@ -79,13 +81,12 @@ def _from_typed(obj: Dict, cls: type = None) -> Dict:
         try: typ = fs[k].type
         except AttributeError: pass
         except KeyError: pass
-        print('_from_typed', k, typ)
 
         res[k] = _from_item_typed(v, typ)
 
     return res
 
-def _to_typed(obj):
+def _to_typed(obj, path: str = ''):
     t = type(obj)
     if t is str:
         return {'S': obj}
@@ -94,15 +95,15 @@ def _to_typed(obj):
     elif t is bool:
         return {'BOOL': obj}
     elif t is list:
-        return {'L': [_to_typed(it) for it in obj]}
+        return {'L': [_to_typed(it[1], f"{path}[{it[0]}]") for it in enumerate(obj)]}
     elif t is dict:
-        return {'M': {k: _to_typed(obj[k]) for k in obj}}
+        return {'M': {k: _to_typed(obj[k], f"{path}.{k}") for k in obj}}
     elif is_dataclass(obj):
         return _to_typed(entity_to_dict(obj))
     elif t is datetime:
         return {'N': str(obj.timestamp())}
     else: 
-        raise RuntimeError(f"Unknown type {t} in _to_typed")
+        raise RuntimeError(f"Unknown type {t} in _to_typed at {path}")
 
 
 def to_dynamo_typed(obj):

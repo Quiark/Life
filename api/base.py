@@ -18,7 +18,7 @@ jinja = Environment(
 )
 
 storage = LocalStorage()
-db = DynamoDatabase()
+db = MockDatabase()
 
 #pc = PostCreator(jinja, storage, db, db.p1)
 
