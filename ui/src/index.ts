@@ -4,14 +4,14 @@ import 'whatwg-fetch';
 
 import './styles/main.scss';
 import { Post, Group, Comment, User } from './data'
-import { api, api_post, file_api, file_html, read_login } from './common'
+import { api, api_post, file_api, file_html, loginTool } from './common'
+import * as config from './config.js'
 import './group-pagination'
 import './post-full'
-
+import './unpublished'
 
 // Tabbed container of groups
-let v = new Vue({
-	el: "#vue",
+let MainVue = Vue.component('main-vue', {
 	template: `<div id="root" class="">
 		<div class="groups-tabs tabs is-medium">
 			<ul>
@@ -25,30 +25,40 @@ let v = new Vue({
 			</ul>
 		</div>
 		<div class="group-content">
-			<group-pagination v-bind:pages="groupObj.pages" v-model="currentPage" />
+            <template v-if="isNotUnpublished">
+                <group-pagination v-bind:pages="groupObj.pages" v-model="currentPage" />
 
-			<post-full 
-				v-for="p in content"
-				v-bind:key="p.postid"
-				v-bind:obj="p">
-			</post-full>
-
+                <post-full 
+                    v-for="p in content"
+                    v-bind:key="p.postid"
+                    v-bind:obj="p">
+                </post-full>
+            </template>
+            <unpublished v-else>
+            </unpublished>
 		</div>
 	</div>
 	`,
-	data: {
-		groups: [] as string[],
-		current: null as string,  // current group id
-		currentPage: null as string, // page id
-		groupObj: { // current
-			pages: {}
-		} as Group,
-		content: [] as Post[],
-		user: null as User
+    data: function() {
+        return {
+            groups: [] as string[],
+            current: null as string,  // current group id
+            currentPage: null as string, // page id
+            groupObj: { // current
+                pages: {}
+            } as Group,
+            content: [] as Post[],
+            user: null as User
+        }
 	},
 
+    computed: {
+        isNotUnpublished: function() {
+            return this.current != config.UNPUBLISHED_GROUP
+        }
+    },
+
 	mounted: function() {
-        read_login()
 		let vm = this
 		this.getUser().then(function(it) {
 			vm.user = it
@@ -92,3 +102,28 @@ let v = new Vue({
 	}
 })
 
+let UnauthComponent = { template: `
+    <section class="hero is-warning is-bold">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title">
+            Missing login
+          </h1>
+          <h2 class="subtitle">
+            Please use the link provided by Roman to log back in. Or ask for a new link.
+          </h2>
+        </div>
+      </div>
+    </section>
+    ` }
+
+let v = new Vue({
+    el: "#vue",
+    computed: {
+        ViewComponent () {
+            if (loginTool.userid() == null) return UnauthComponent
+            else return MainVue
+        }
+    },
+    render (h) { return h(this.ViewComponent) }
+})

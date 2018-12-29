@@ -59,3 +59,16 @@ operations
 * get posts by groupid + page 
 
 Access pattern: pretty much only the last page (month).
+
+# Uploading pics
+
+Upload pics to `UPLOAD_BUCKET`, they will be resized and placed into 
+`$UNPUBLISHED_GROUP` as both `$UUID.jpg` and `$IMG_PREVIEW_PREFIX-$UUID.jpg`
+
+todo:
+ + generating random name
+ - setting permissions
+
+
+checklist:
+ * deploy/resizer/config.json needs to be updated to match config.py values, dont have / before 'storage'

@@ -2,14 +2,13 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from dataclasses import asdict, is_dataclass
 import base
+import config
 from lib.data import Comment, Post, Group, User, LifeApp
 
 app = Flask(__name__)
 # TODO whitelist S3 static sites only
 CORS(app)
 # TODO facebook-less event management
-
-CURRENT_USERID = 'admin'
 
 # --- middleware ---
 def to_popo(obj):
@@ -81,7 +80,7 @@ def create_comment(groupid, postid):
     user_must_ingroup(groupid)
     dat = request.get_json()
     cmnt = Comment(
-            author=CURRENT_USERID,
+            author=request.Life.user.id,
             text=dat['text'])
     base.db.add_comment(groupid, postid, cmnt)
     return 'ok'
@@ -91,3 +90,11 @@ def create_comment(groupid, postid):
 def get_user():
     load_user()
     return respond(request.Life.user)
+
+@app.route('/groups/unpublished/images')
+def get_unpublished_images():
+    groupid = config.UNPUBLISHED_GROUP
+    user_must_ingroup(groupid)
+
+    return respond(base.storage.list_items(base.storage.get_group_path(groupid)))
+

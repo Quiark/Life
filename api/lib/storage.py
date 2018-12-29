@@ -1,8 +1,14 @@
 import os
 from os.path import join
+from typing import List
 import config
 
-class LocalStorage:
+class Storage:
+    def get_group_path(self, groupid: str) -> str:
+        return join(config.STORAGE_PREFIX, groupid, '')
+
+
+class LocalStorage(Storage):
     def __init__(self):
         self.path = config.LOCAL_STORAGE
         os.makedirs(self.path, exist_ok=True)
@@ -18,3 +24,7 @@ class LocalStorage:
         fullpath = join(self.path, Key)
         with open(fullpath) as it:
             return it.read()
+
+    # not specific to group, just a FS path and returns names only
+    def list_items(self, path: str) -> List[str]:
+        return os.listdir(join(self.path, path))

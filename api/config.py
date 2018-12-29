@@ -2,6 +2,12 @@
 BUCKET_NAME='life.rplasil.name'
 BUCKET_URL=BUCKET_NAME + '.s3-website.' + 'ap-northeast-2.amazonaws.com'
 
+# todo
+UPLOAD_BUCKET='life-upload'
+UNPUBLISHED_GROUP='keCxhEChibx-unpublished'
+
+IMG_PREVIEW_PREFIX='p300-'
+
 FIRST_GROUP='avz84Ok3xhPBtkoNne-family'
 
 TEMPLATES = './'
@@ -15,7 +21,7 @@ LOCAL = True
 
 if LOCAL:
     TEMPLATES = 'templates/'
-    LOCAL_STORAGE = '/Users/roman/Devel/Life/runtime/storage'
+    LOCAL_STORAGE = '/Users/roman/Devel/Life/runtime/'
 
     # relative to index.html, what URL are groups under
     STORAGE_PREFIX = 'storage/'

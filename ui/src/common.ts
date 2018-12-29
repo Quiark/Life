@@ -6,22 +6,33 @@ var currentUser = {
     token: null
 }
 
-// either from localSession or from url
-// where should this be called?
-export function read_login() {
-    let parts = window.location.hash.split('/')
-    if (parts[0] === '#login') {
-        currentUser = {
-            id: parts[1],
-            token: parts[2]
-        }
-        localStorage.setItem('currentUser', JSON.stringify(currentUser))
+class LoginTool {
+    
+    // either from localSession or from url
+    // where should this be called?
+    public read_login() {
+        let parts = window.location.hash.split('/')
+        if (parts[0] === '#login') {
+            currentUser = {
+                id: parts[1],
+                token: parts[2]
+            }
+            localStorage.setItem('currentUser', JSON.stringify(currentUser))
 
-    } else {
-        let stored = JSON.parse(localStorage.getItem('currentUser'))
-        if (stored != null) currentUser = stored
+        } else {
+            let stored = JSON.parse(localStorage.getItem('currentUser'))
+            if (stored != null) currentUser = stored
+        }
     }
+
+    public userid() {
+        this.read_login()
+        return currentUser.id
+    }
+
 }
+
+export let loginTool = new LoginTool()
 
 function api_headers() {
     return {

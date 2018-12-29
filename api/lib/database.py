@@ -38,7 +38,8 @@ class MockDatabase(Database):
         self.groups = {}
         self.users = {'admin': User('admin', 'Adminus', groups=[
             config.FIRST_GROUP,
-            'bugcp-kungfu'
+            'bugcp-kungfu',
+            config.UNPUBLISHED_GROUP
             ], token='abcd_kocka_heslo')}
 
         self.g1 = Group(
@@ -54,9 +55,13 @@ class MockDatabase(Database):
                     '201705': 3,
                     '201802': 1,
                     })
+        self.g3 = Group(
+                groupid=config.UNPUBLISHED_GROUP,
+                pages={})
 
         self.add_group(self.g1)
         self.add_group(self.g2)
+        self.add_group(self.g3)
 
         self.p1 = Post(
             groupid=config.FIRST_GROUP,
