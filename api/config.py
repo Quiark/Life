@@ -7,12 +7,16 @@ UPLOAD_BUCKET='life-upload'
 UNPUBLISHED_GROUP='keCxhEChibx-unpublished'
 
 IMG_PREVIEW_PREFIX='p300-'
+IMG_PREVIEW_SIZE=300
+IMG_EXT='.jpg'
 
 FIRST_GROUP='avz84Ok3xhPBtkoNne-family'
 
 TEMPLATES = './'
 
 
+# relative to index.html, what URL are groups under
+STORAGE_PREFIX = 'storage/'
 
 API_BASE = 'https://AAAA-now.sh/api/'
 
@@ -23,7 +27,5 @@ if LOCAL:
     TEMPLATES = 'templates/'
     LOCAL_STORAGE = '/Users/roman/Devel/Life/runtime/'
 
-    # relative to index.html, what URL are groups under
-    STORAGE_PREFIX = 'storage/'
 
     API_BASE = 'http://localhost:7004/'

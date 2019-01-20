@@ -26,5 +26,8 @@ class LocalStorage(Storage):
             return it.read()
 
     # not specific to group, just a FS path and returns names only
-    def list_items(self, path: str) -> List[str]:
-        return os.listdir(join(self.path, path))
+    def list_items(self, path: str, prefix: str) -> List[str]:
+        return [it for it in os.listdir(join(self.path, path)) if it.startswith(prefix)]
+
+    def rename(self, fr: str, to: str):
+        os.rename(fr, to)

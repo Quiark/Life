@@ -22,6 +22,7 @@ class Database:
         data.postid = '{}{:04}'.format(page, ix)
 
         self._store_post(data)
+        return data
 
     # internal interface
     def _store_post(self, data: Post):
@@ -44,10 +45,12 @@ class MockDatabase(Database):
 
         self.g1 = Group(
                 groupid=config.FIRST_GROUP,
+                name='Family',
                 pages={'201601': 0})
 
         self.g2 = Group(
                 groupid='bugcp-kungfu',
+                name='Kung-fu',
                 pages={
                     '201701': 1,
                     '201702': 2,
@@ -57,6 +60,7 @@ class MockDatabase(Database):
                     })
         self.g3 = Group(
                 groupid=config.UNPUBLISHED_GROUP,
+                name='unpub',
                 pages={})
 
         self.add_group(self.g1)
@@ -97,6 +101,9 @@ class MockDatabase(Database):
 
     def get_group(self, groupid: str) -> Group:
         return self.groups[groupid]
+
+    def get_groups(self) -> List[Group]:
+        return list(self.groups.values())
 
     def _inc_postix(self, groupid: str, page: str) -> int:
         ix = self.groups[groupid].pages.setdefault(page, 0)

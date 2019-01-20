@@ -18,6 +18,7 @@ class Post:
     groupid: str
     # refers to image on S3 but not gettable by id
     # unique within the group
+    # pageid + counter
     postid: str
     # yes?
     text: str
@@ -39,6 +40,9 @@ def Post_partition_id(groupid, postid) -> str:
 class Group:
     groupid: str
 
+    # display name, shall contain emoji
+    name: str
+
     # pageid -> next id of post
     # pageid is 201804 for april of 2018
     pages: Dict[str, int]
@@ -51,7 +55,7 @@ class User:
     name: str
     token: str
 
-    groups: List[Group]
+    groups: List[str]
 
 @dataclass
 class LifeApp:

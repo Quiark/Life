@@ -1,9 +1,14 @@
+import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from dataclasses import asdict, is_dataclass
+from dataclasses import asdict, is_dataclass, dataclass
+from datetime import datetime
+from typing import Dict
 import base
 import config
 from lib.data import Comment, Post, Group, User, LifeApp
+from lib.common import lstrip_if, display_timestamp
+from lib.posts import PostCreatorV2
 
 app = Flask(__name__)
 # TODO whitelist S3 static sites only
@@ -12,14 +17,24 @@ CORS(app)
 
 # --- middleware ---
 def to_popo(obj):
+    print(f'{type(obj)}: {obj}')
     if type(obj) is list:
         return list(to_popo(i) for i in obj)
     elif type(obj) is dict:
         return {k: to_popo(obj[k]) for k in obj}
     elif is_dataclass(obj):
-        return asdict(obj)
+        return to_popo(asdict(obj))
+    elif type(obj) is datetime:
+        return display_timestamp(obj)
     else:
         return obj
+
+def from_popo(obj: Dict, cls: type):
+    # basic impl at first, should check input for correct types
+    return cls(**obj)
+
+def typed_payload(cls: type):
+    return from_popo(request.get_json(), cls)
 
 def respond(obj):
     return jsonify(to_popo(obj))
@@ -62,18 +77,21 @@ def hello_world():
 def get_group(groupid):
     return respond(base.db.get_group(groupid))
 
+@app.route('/groups')
+def get_groups():
+    load_user()
+    groupids = request.Life.user.groups
+    all = base.db.get_groups()
+
+    return respond([x for x in all if (x.groupid in groupids)])
+
+
 @app.route('/groups/<groupid>/page/<page>')
 def get_posts_by_page(groupid, page):
     user_must_ingroup(groupid)
     result = base.db.get_posts_by_page(groupid, page)
     return respond(result)
 
-
-@app.route('/posts', methods=['POST'])
-def create_post():
-    dat = request.get_json()
-    # TODO
-    #
 
 @app.route('/groups/<groupid>/posts/<postid>/comments', methods=['POST'])
 def create_comment(groupid, postid):
@@ -96,5 +114,29 @@ def get_unpublished_images():
     groupid = config.UNPUBLISHED_GROUP
     user_must_ingroup(groupid)
 
-    return respond(base.storage.list_items(base.storage.get_group_path(groupid)))
+    # TODO move to dedicated code file
+    filelist = base.storage.list_items(
+        base.storage.get_group_path(groupid), 
+        config.IMG_PREVIEW_PREFIX)
 
+    response = [{
+        'id': lstrip_if(os.path.splitext(x)[0], config.IMG_PREVIEW_PREFIX),
+        'filename': x
+        } for x in filelist]
+
+    return respond(response)
+
+@dataclass
+class PostPayload: # should it be here?
+    groupid: str
+    text: str
+
+
+@app.route('/groups/unpublished/publish/<imageid>', methods=['POST'])
+def publish(imageid: str):
+    user_must_ingroup(config.UNPUBLISHED_GROUP)
+    dat = typed_payload(PostPayload)
+    user_must_ingroup(dat.groupid)
+
+    pc = PostCreatorV2(base.storage, base.db, imageid)
+    pc.publish(dat.groupid, dat.text)

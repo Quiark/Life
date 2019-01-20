@@ -5,6 +5,7 @@ import json
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 import config
 from lib.storage import LocalStorage
+import lib.s3
 from lib.posts import PostCreator
 from lib.database import MockDatabase
 from lib.dynamodb import DynamoDatabase
@@ -17,7 +18,7 @@ jinja = Environment(
     autoescape=select_autoescape(['html', 'xml'])
 )
 
-storage = LocalStorage()
+storage = lib.s3.S3Storage()
 db = MockDatabase()
 
 #pc = PostCreator(jinja, storage, db, db.p1)

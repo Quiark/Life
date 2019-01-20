@@ -13,7 +13,7 @@ Vue.component('post-full', {
                 <div class="content">
                     {{ obj.text }}
                 </div>
-                <img width="480" v-bind:src="imgurl" />
+                <img  v-bind:width="previewSize" v-bind:src="imgurl" />
 
 				<comment-list v-bind:comments="obj.comments"/>
 				<div class="columns is-gapless">
@@ -37,7 +37,10 @@ Vue.component('post-full', {
     `,
     props: ['obj'],
 	data: function() {
-		return {commentInput: null}
+        return {
+            commentInput: null,
+            previewSize: config.IMG_PREVIEW_SIZE
+        }
 	},
 
     computed: {

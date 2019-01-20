@@ -16,11 +16,11 @@ let MainVue = Vue.component('main-vue', {
 		<div class="groups-tabs tabs is-medium">
 			<ul>
 				<li	v-for="group in groups"
-					v-bind:class="[{ 'is-active': current === group }]" >
+					v-bind:class="[{ 'is-active': current === group.groupid }]" >
 
-					<a	v-bind:key="group" 
-						v-on:click="current = group"
-						href="#" >{{ group }}</a>
+					<a	v-bind:key="group.groupid" 
+						v-on:click="current = group.groupid"
+						href="#" >{{ group.name }}</a>
 				</li>
 			</ul>
 		</div>
@@ -62,8 +62,10 @@ let MainVue = Vue.component('main-vue', {
 		let vm = this
 		this.getUser().then(function(it) {
 			vm.user = it
-			vm.groups = it.groups
-			vm.current = it.groups[0]
+        })
+        this.getGroups().then(function(it) {
+			vm.groups = it
+			vm.current = it[0].groupid
 		})
 	},
 
@@ -89,6 +91,9 @@ let MainVue = Vue.component('main-vue', {
 		getGroup: function(gr) {
 			return api(`groups/${ gr }`)
 		},
+        getGroups: function() {
+            return api('groups')
+        },
 		getUser: function() {
 			return api(`user`)
 		},

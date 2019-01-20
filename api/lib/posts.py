@@ -1,12 +1,16 @@
 import os
 import json
 import logging
+from os.path import join
 
 import config
 from lib.database import Database
+from lib.storage import Storage
 from lib.data import Post
 
 
+
+# Deprecated
 class PostCreator():
     def __init__(self, jinja, storage, db: Database, data: Post):
         '''imgpath is relative to groupid'''
@@ -52,3 +56,31 @@ class PostCreator():
         index.append(self.data.postid)
         self.put_fsdata(index)
 
+
+class PostCreatorV2():
+    def __init__(self, storage: Storage, db: Database, unpub_id: str):
+        self.storage = storage
+        self.db = db
+
+        # without file ext or prefix
+        self.unpub_id = unpub_id
+
+    def publish(self, groupid: str, text: str):
+        data = Post(
+                groupid,
+                None,  # to be filled later
+                text,
+                []
+        )
+        # save to DB .. these steps are not exactly atomic
+        data = self.db.add_post(data)
+
+        # move the file
+        self.storage.rename(
+                f"{config.STORAGE_PREFIX}/{config.UNPUBLISHED_GROUP}/{self.unpub_id}{config.IMG_EXT}",
+                f"{config.STORAGE_PREFIX}/{self.groupid}/{data.postid}{config.IMG_EXT}"
+        )
+        self.storage.rename(
+                f"{config.STORAGE_PREFIX}/{config.UNPUBLISHED_GROUP}/{config.IMG_PREVIEW_PREFIX}{self.unpub_id}{config.IMG_EXT}",
+                f"{config.STORAGE_PREFIX}/{self.groupid}/{config.IMG_PREVIEW_PREFIX}{data.postid}{config.IMG_EXT}"
+        )

@@ -16,11 +16,12 @@ export interface User {
 	id: string;
 	name: string;
 	token: string;
-	groups: Array<Group>;
+	groups: Array<string>;
 }
 
 export interface Group {
 	groupid: string;
+	name: string;
 	pages: object;
 	colour: string;
 }
