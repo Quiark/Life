@@ -17,7 +17,6 @@ CORS(app)
 
 # --- middleware ---
 def to_popo(obj):
-    print(f'{type(obj)}: {obj}')
     if type(obj) is list:
         return list(to_popo(i) for i in obj)
     elif type(obj) is dict:
@@ -65,6 +64,8 @@ def load_user():
 
 def user_must_ingroup(groupid: str):
     load_user()
+    if request.Life.user == None:
+        raise AuthorizationError('have to log in')
     if not (groupid in request.Life.user.groups):
         raise AuthorizationError('group')
 
@@ -90,6 +91,7 @@ def get_groups():
 def get_posts_by_page(groupid, page):
     user_must_ingroup(groupid)
     result = base.db.get_posts_by_page(groupid, page)
+    result.sort(key=lambda x: x.postid, reverse=True)
     return respond(result)
 
 
@@ -127,7 +129,7 @@ def get_unpublished_images():
     return respond(response)
 
 @dataclass
-class PostPayload: # should it be here?
+class PostPayload: # should it be here? TODO no, put it in data so it can be converted to ts
     groupid: str
     text: str
 
@@ -140,3 +142,4 @@ def publish(imageid: str):
 
     pc = PostCreatorV2(base.storage, base.db, imageid)
     pc.publish(dat.groupid, dat.text)
+    return respond({})

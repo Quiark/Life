@@ -1,3 +1,4 @@
+import * as _ from "lodash";
 import * as config from './config.js'
 
 
@@ -26,7 +27,7 @@ class LoginTool {
     }
 
     public userid() {
-        this.read_login()
+        if (currentUser.id == null) this.read_login()
         return currentUser.id
     }
 
@@ -36,7 +37,7 @@ export let loginTool = new LoginTool()
 
 function api_headers() {
     return {
-        'Authorization': `${currentUser.id} ${currentUser.token}`
+        'Authorization': `${loginTool.userid()} ${currentUser.token}`
     }
 }
 
@@ -47,15 +48,15 @@ export function api(path: string): Promise<any> {
 export function api_post(path: string, payload: any): Promise<any> {
 	return fetch(config.API_BASE + path, {
 		method: 'POST',
-		headers: {
+		headers: _.assign(api_headers(), {
 			'Content-Type': 'application/json'
-		},
+		}),
 		body: JSON.stringify(payload)
 	})
 }
 
 export function file_api(path: string): Promise<any> {
-	return fetch(config.STORAGE_PREFIX + path).then((it) => it.json())
+    return fetch(config.STORAGE_PREFIX + path, { headers: api_headers() }).then((it) => it.json())
 }
 
 export function file_html(path: string): Promise<string> {

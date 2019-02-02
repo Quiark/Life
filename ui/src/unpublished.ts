@@ -29,8 +29,7 @@ Vue.component('unpublished-item', {
                                     v-model="it.message"
                                     rows="1" />
                         </div>
-                        <group-list v-model="gr" />
-                        {{ gr }}
+                        <group-list v-model="gr" no_unpub="true" />
                     </div>
                     <button v-on:click="submit(it)" class="button is-primary"><i class="fas fa-check"></i>Publish</button>
                 </div>
@@ -40,7 +39,7 @@ Vue.component('unpublished-item', {
     props: ['it'],
 
     data: () => ({
-        gr: null
+        gr: null as string
     }),
 
     methods: {
@@ -48,8 +47,19 @@ Vue.component('unpublished-item', {
             return config.STORAGE_PREFIX + config.UNPUBLISHED_GROUP + '/' + name;
         },
         submit: function(item: Item) {
-            console.log(item.message)
-            api(`groups/unpublished/publish/${item.id}`)
+            let vm = this
+            let post = {
+                groupid: this.gr,
+                text: item.message
+            }
+            api_post(`groups/unpublished/publish/${item.id}`, post).then((resp) => {
+                if (resp.ok) {
+                    vm.$emit('published')
+                } else {
+                    // TODO error handling
+                    console.error(resp)
+                }
+            })
         }
     }
 })
@@ -65,7 +75,7 @@ Vue.component('unpublished', {
                 </span>
                 <span>Refresh</span>
             </a>
-            <unpublished-item v-for="it in items" :key="it.id" :it="it" />
+            <unpublished-item v-for="it in items" :key="it.id" :it="it" v-on:published="onItemPublished(it)" />
         </div>
     `,
 
@@ -88,6 +98,10 @@ Vue.component('unpublished', {
             this.getItems().then((it) => {
                 vm.items = _.map(it, (x) => new Item(x.id, x.filename, null))
             })
+        },
+        onItemPublished: function(evt: Item) {
+            console.log('got published event', evt)
+            this.items = _.filter(this.items, (it) => it.id !== evt.id)
         }
     }
 

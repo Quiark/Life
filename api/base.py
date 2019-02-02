@@ -11,18 +11,22 @@ from lib.database import MockDatabase
 from lib.dynamodb import DynamoDatabase
 from lib.types import TypescriptDefs
 
-os.environ['AWS_CONFIG_FILE'] = '../.dynamodb_creds.txt'
+os.environ['AWS_SHARED_CREDENTIALS_FILE'] = '../.dynamodb_creds.txt'
 
 jinja = Environment(
     loader=FileSystemLoader(config.TEMPLATES),
     autoescape=select_autoescape(['html', 'xml'])
 )
 
-storage = lib.s3.S3Storage()
-db = MockDatabase()
+if config.STORAGE_IMPL == 's3':
+    storage = lib.s3.S3Storage()
+else:
+    storage = lib.storage.LocalStorage()
 
-#pc = PostCreator(jinja, storage, db, db.p1)
-
+if True:
+    db = DynamoDatabase()
+else:
+    db = MockDatabase()
 
 # export config to javascript
 with open('../ui/src/config.js', 'w') as it:

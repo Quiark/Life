@@ -77,10 +77,10 @@ class PostCreatorV2():
 
         # move the file
         self.storage.rename(
-                f"{config.STORAGE_PREFIX}/{config.UNPUBLISHED_GROUP}/{self.unpub_id}{config.IMG_EXT}",
-                f"{config.STORAGE_PREFIX}/{self.groupid}/{data.postid}{config.IMG_EXT}"
+                f"{config.STORAGE_PREFIX}{config.UNPUBLISHED_GROUP}/{self.unpub_id}{config.IMG_EXT}",
+                f"{config.STORAGE_PREFIX}{groupid}/{data.postid}{config.IMG_EXT}"
         )
         self.storage.rename(
-                f"{config.STORAGE_PREFIX}/{config.UNPUBLISHED_GROUP}/{config.IMG_PREVIEW_PREFIX}{self.unpub_id}{config.IMG_EXT}",
-                f"{config.STORAGE_PREFIX}/{self.groupid}/{config.IMG_PREVIEW_PREFIX}{data.postid}{config.IMG_EXT}"
+                f"{config.STORAGE_PREFIX}{config.UNPUBLISHED_GROUP}/{config.IMG_PREVIEW_PREFIX}{self.unpub_id}{config.IMG_EXT}",
+                f"{config.STORAGE_PREFIX}{groupid}/{config.IMG_PREVIEW_PREFIX}{data.postid}{config.IMG_EXT}"
         )

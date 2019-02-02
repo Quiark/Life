@@ -102,7 +102,7 @@ class MockDatabase(Database):
     def get_group(self, groupid: str) -> Group:
         return self.groups[groupid]
 
-    def get_groups(self) -> List[Group]:
+    def get_groups(self) -> Optional[List[Group]]:
         return list(self.groups.values())
 
     def _inc_postix(self, groupid: str, page: str) -> int:
@@ -127,7 +127,7 @@ class MockDatabase(Database):
         return self.posts[postid]
 
     def get_posts_by_page(self, groupid: str, page: str) -> List[Post]:
-        ids = filter(lambda it: self.posts[it].page() == page, self.posts)
+        ids = filter(lambda it: (self.posts[it].page() == page) and (self.posts[it].groupid == groupid), self.posts)
         return [self.posts[x] for x in ids]
 
     def get_user(self, userid):

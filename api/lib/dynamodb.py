@@ -213,6 +213,11 @@ class DynamoDatabase(Database):
         if 'Item' not in response: return None
         return entity_from_typed(response['Item'], Group)
 
+    def get_groups(self) -> Optional[List[Group]]:
+        response = self.dynamo.scan(TableName=TABLE_GROUPS)
+        if 'Items' not in response: return None
+        return [entity_from_typed(x, Group) for x in response['Items']]
+
     def get_posts_by_page(self, groupid: str, page: str) -> Optional[List[Post]]:
         response = self.dynamo.query(
                 TableName=TABLE_POSTS,
@@ -254,3 +259,24 @@ class DynamoDatabase(Database):
                     ':it': _to_typed([comment])
                 }
         )
+
+
+class DynamoAdmin(DynamoDatabase):
+    def clear_table(self, name, key):
+        users = self.dynamo.scan(TableName=name)['Items']
+        for it in users:
+            self.dynamo.delete_item(TableName=name, Key={key: it[key]})
+
+    def clear_groups(self):
+        self.clear_table(TABLE_GROUPS, 'groupid')
+
+    def fill_sample_data(self):
+        import lib.database
+        mockdb = lib.database.MockDatabase()
+        mockdb.g1.pages = {}
+        mockdb.g2.pages = {}
+        self.add_group(mockdb.g1)
+        self.add_group(mockdb.g2)
+        self.add_group(mockdb.g3)
+        self.add_user(mockdb.users['admin'])
+

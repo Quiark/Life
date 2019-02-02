@@ -101,7 +101,7 @@ let MainVue = Vue.component('main-vue', {
 			let vm = this
 
 			this.getContent(this.current, this.currentPage).then(function(it) {
-				vm.content = it
+                vm.content = it // TODO reverse order, probably on backend
 			})
 		}
 	}

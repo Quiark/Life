@@ -30,4 +30,5 @@ class LocalStorage(Storage):
         return [it for it in os.listdir(join(self.path, path)) if it.startswith(prefix)]
 
     def rename(self, fr: str, to: str):
-        os.rename(fr, to)
+        os.rename(join(self.path, fr),
+                  join(self.path, to))

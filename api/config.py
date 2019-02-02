@@ -16,12 +16,14 @@ TEMPLATES = './'
 
 
 # relative to index.html, what URL are groups under
+# must end with /
 STORAGE_PREFIX = 'storage/'
 
 API_BASE = 'https://AAAA-now.sh/api/'
 
-# LOCAL DEPLOYMENT
+# LOCAL DEPLOYMENT (this flag is only used in this config)
 LOCAL = True
+STORAGE_IMPL = 's3'
 
 if LOCAL:
     TEMPLATES = 'templates/'
