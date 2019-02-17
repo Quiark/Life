@@ -10,7 +10,6 @@ class Comment:
     text: str
     time: datetime = datetime.utcnow()
 
-# TODO what are the keys and what are the indexes?
 @dataclass
 class Post:
     # PARTITION KEY: groupid + postid
@@ -57,7 +56,14 @@ class User:
 
     groups: List[str]
 
+
 @dataclass
 class LifeApp:
     user: Optional[User]
     inited: bool  # only for the user attribute actually
+
+
+@dataclass
+class PostPayload:
+    groupid: str
+    text: str

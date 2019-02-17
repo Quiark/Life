@@ -3,6 +3,7 @@ import Vue from "vue";
 import { api, api_post, file_api, file_html, loginTool } from './common'
 import * as config from './config.js'
 
+// gets grouplist from parent to avoid fetching it a milion times
 Vue.component('group-list', {
     template: `
     <div class="field">
@@ -20,24 +21,15 @@ Vue.component('group-list', {
     `,
 
     data: () => ({
-        groups: [],
         sel: null
     }),
 
-    props: ['no_unpub'],
+    props: ['groups'],
 
     watch: {
         sel: function(val) {
             this.$emit('input', val)
         }
-    },
-
-    mounted: function() {
-        let vm = this
-        api('groups').then((groups) => {
-            groups = _.filter(groups, (it) => !((this.no_unpub == 'true') && (it.groupid === config.UNPUBLISHED_GROUP)))
-            vm.groups = [{name: '--', groupid: null}].concat(groups)
-        })
     }
 
 })

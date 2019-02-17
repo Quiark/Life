@@ -1,6 +1,7 @@
 # Cloud Deployment with Now 2
 BUCKET_NAME='life.rplasil.name'
-BUCKET_URL=BUCKET_NAME + '.s3-website.' + 'ap-northeast-2.amazonaws.com'
+#BUCKET_URL=BUCKET_NAME + '.s3-website.' + 'ap-northeast-2.amazonaws.com'
+BUCKET_URL='https://s3.ap-northeast-2.amazonaws.com/' + BUCKET_NAME + '/'
 
 # todo
 UPLOAD_BUCKET='life-upload'

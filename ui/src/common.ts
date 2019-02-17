@@ -33,7 +33,20 @@ class LoginTool {
 
 }
 
+class ToastTool {
+
+    vue: any;
+
+    public handle_err(msg: string, debug_obj) {
+        console.error(msg, debug_obj)
+
+        this.vue.$sureToast.show(msg);
+    }
+
+}
+
 export let loginTool = new LoginTool()
+export let toastTool = new ToastTool();
 
 function api_headers() {
     return {
@@ -41,8 +54,20 @@ function api_headers() {
     }
 }
 
+function api_error_handler(resp) {
+    if (resp.ok)
+        return resp
+    else {
+        toastTool.handle_err('Something went wrong', [resp])
+    }
+
+}
+
+// note that this one handles response automatically and returns json
 export function api(path: string): Promise<any> {
-    return fetch(config.API_BASE + path, { headers: api_headers() }).then((it) => it.json())
+    return fetch(config.API_BASE + path, { headers: api_headers() })
+            .then(api_error_handler)
+            .then((resp) => resp.json())
 }
 
 export function api_post(path: string, payload: any): Promise<any> {
@@ -52,7 +77,7 @@ export function api_post(path: string, payload: any): Promise<any> {
 			'Content-Type': 'application/json'
 		}),
 		body: JSON.stringify(payload)
-	})
+    }).then(api_error_handler)
 }
 
 export function file_api(path: string): Promise<any> {
@@ -61,4 +86,22 @@ export function file_api(path: string): Promise<any> {
 
 export function file_html(path: string): Promise<string> {
 	return fetch(config.STORAGE_PREFIX + path).then((it) => it.text())
+}
+
+export function imgurl(groupid: string, name: string): string {
+    let start = ''
+    if (config.LOCAL && config.STORAGE_IMPL == 's3')
+        start = config.BUCKET_URL
+
+    /*
+https://s3.ap-northeast-2.amazonaws.com/life.rplasil.name/storage/keCxhEChibx-unpublished/p300-217bb62ab8be5f8c1d519d22cf8182cd.jpg
+http://life.rplasil.name.s3-website.ap-northeast-2.amazonaws.com/storage/keCxhEChibx-unpublished/p300-02d0fc3a4243387758aec3b96e201548.jpg
+     */
+
+    return start + config.STORAGE_PREFIX + groupid + '/' + name;
+    
+}
+
+export function rainbow_class(id: string): string {
+    return 'rainbow-edge' + (parseInt(id) % 6)
 }

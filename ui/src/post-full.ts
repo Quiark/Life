@@ -1,14 +1,14 @@
 import * as _ from "lodash"
 import Vue from "vue"
 
-import { api, api_post, file_api, file_html } from './common'
+import { api, api_post, file_api, file_html, rainbow_class, imgurl } from './common'
 import { Post, Group, Comment, User } from './data'
 import * as config from './config.js'
 import './comment-list'
 
 Vue.component('post-full', {
     template: `
-        <div class="post card">
+        <div class="post card" v-bind:class="display_class">
             <div class="card-content">
                 <div class="content">
                     {{ obj.text }}
@@ -45,11 +45,14 @@ Vue.component('post-full', {
 
     computed: {
         imgurl: function() {
-            return config.STORAGE_PREFIX + this.obj.groupid + '/' + this.obj.postid + '.jpg'
+            return imgurl(this.obj.groupid, config.IMG_PREVIEW_PREFIX + this.obj.postid + '.jpg')
 		},
 		posturl: function() {
 			return `/ui/groups/${ this.obj.groupid }/posts/${ this.obj.postid }`
-		}
+        },
+        display_class: function() {
+            return rainbow_class(this.obj.postid)
+        }
 	},
 
 	methods: {

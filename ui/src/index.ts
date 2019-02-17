@@ -1,14 +1,20 @@
 import * as _ from "lodash";
 import Vue from "vue";
 import 'whatwg-fetch';
+import SureToast from 'vue-sure-toast';
 
 import './styles/main.scss';
 import { Post, Group, Comment, User } from './data'
-import { api, api_post, file_api, file_html, loginTool } from './common'
+import { api, api_post, file_api, file_html, loginTool, toastTool } from './common'
 import * as config from './config.js'
 import './group-pagination'
 import './post-full'
 import './unpublished'
+
+Vue.use(SureToast, {
+  position: 'top-center',
+  theme: 'warning'
+})
 
 // Tabbed container of groups
 let MainVue = Vue.component('main-vue', {
@@ -132,3 +138,5 @@ let v = new Vue({
     },
     render (h) { return h(this.ViewComponent) }
 })
+
+toastTool.vue = v

@@ -1,6 +1,8 @@
 import * as _ from "lodash";
 import Vue from "vue";
 
+import { rainbow_class } from './common'
+
 let MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 Vue.component('group-pagination', {
@@ -10,7 +12,7 @@ Vue.component('group-pagination', {
             <a class="pagination-next">Next page</a> -->
             <ul class="pagination-list" v-for="page in pagenames">
                 <li><a 
-                        v-bind:class="[{ 'is-current': value === page[2]}, 'pagination-link', 'has-text-centered']"
+                        v-bind:class="[{ 'is-current': value === page[2]}, 'button', 'pagination-link', 'has-text-centered', display_class(page)]"
                         v-bind:key="page[2]"
                         v-on:click="$emit('input', page[2])"
                         >
@@ -31,6 +33,11 @@ Vue.component('group-pagination', {
         }
     },
     methods: {
+
+        display_class: function(page) {
+            console.log('dispaly class', page)
+            return rainbow_class(page[2])
+        }
 
     }
 })

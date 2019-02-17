@@ -26,3 +26,8 @@ export interface Group {
 	colour: string;
 }
 
+export interface PostPayload {
+	groupid: string;
+	text: string;
+}
+

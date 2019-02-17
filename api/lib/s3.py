@@ -23,8 +23,11 @@ class S3Storage(Storage):
         return [self.strip_expected_prefix(path, x['Key']) for x in cont]
 
     def rename(self, fr: str, to: str):
-        self.s3.copy_object({
-            'Bucket': self.bucket,
-            'Key': fr
-            }, self.bucket, to)
+        self.s3.copy_object(
+                CopySource={
+                    'Bucket': self.bucket,
+                    'Key': fr
+                },
+                Bucket=self.bucket,
+                Key=to)
         self.s3.delete_object(Bucket=self.bucket, Key=fr)

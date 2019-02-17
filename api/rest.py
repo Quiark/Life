@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Dict
 import base
 import config
-from lib.data import Comment, Post, Group, User, LifeApp
+from lib.data import Comment, Post, Group, User, LifeApp, PostPayload
 from lib.common import lstrip_if, display_timestamp
 from lib.posts import PostCreatorV2
 
@@ -128,10 +128,6 @@ def get_unpublished_images():
 
     return respond(response)
 
-@dataclass
-class PostPayload: # should it be here? TODO no, put it in data so it can be converted to ts
-    groupid: str
-    text: str
 
 
 @app.route('/groups/unpublished/publish/<imageid>', methods=['POST'])

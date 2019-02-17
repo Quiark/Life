@@ -43,7 +43,8 @@ class TypescriptDefs:
                 lib.data.Comment, 
                 lib.data.Post,
                 lib.data.User,
-                lib.data.Group
+                lib.data.Group,
+                lib.data.PostPayload
         ]
         with open(fname, 'w') as outf:
             for it in types:
