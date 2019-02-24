@@ -4,6 +4,7 @@ import boto3
 import dataclasses
 from dataclasses import asdict, is_dataclass, fields
 
+import config
 import lib
 from lib.data import *
 from lib.database import Database
@@ -120,7 +121,9 @@ TABLE_POSTS = 'life-posts'
 
 class DynamoDatabase(Database):
     def __init__(self):
-        self.dynamo = boto3.client('dynamodb')
+        kwargs = {}
+        if config.DYNAMO_IMPL == 'local': kwargs['endpoint_url'] = 'http://localhost:8000'
+        self.dynamo = boto3.client('dynamodb', **kwargs)
 
     def create_tables(self):
         defaults = {
@@ -134,6 +137,18 @@ class DynamoDatabase(Database):
         }
 
         # TODO create users table
+        users = dict(defaults)
+        users['TableName'] = TABLE_USERS
+        users['AttributeDefinitions'] = [{
+            'AttributeName': 'id',
+            'AttributeType': 'S'
+        }]
+        users['KeySchema'] = [{
+            'AttributeName': 'id',
+            'KeyType': 'HASH'
+        }]
+        self.dynamo.create_table(**users)
+
         posts = dict(defaults)
         posts['TableName'] = TABLE_POSTS
         posts['AttributeDefinitions'] = [{
@@ -269,6 +284,13 @@ class DynamoAdmin(DynamoDatabase):
 
     def clear_groups(self):
         self.clear_table(TABLE_GROUPS, 'groupid')
+
+    def clear_posts(self, groupid):
+        name = TABLE_POSTS
+        items = self.dynamo.scan(TableName=name)['Items']
+        for it in items:
+            self.dynamo.delete_item(TableName=name, Key={key: it[key]})
+
 
     def fill_sample_data(self):
         import lib.database

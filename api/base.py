@@ -9,7 +9,10 @@ from lib.database import MockDatabase
 from lib.dynamodb import DynamoDatabase
 from lib.types import TypescriptDefs
 
-os.environ['AWS_SHARED_CREDENTIALS_FILE'] = '../.dynamodb_creds.txt'
+if config.DYNAMO_IMPL == 'local':
+    os.environ['AWS_SHARED_CREDENTIALS_FILE'] = '../.dynamodb_local.txt'
+elif config.DYNAMO_IMPL == 'aws':
+    os.environ['AWS_SHARED_CREDENTIALS_FILE'] = '../.dynamodb_creds.txt'
 
 
 if config.STORAGE_IMPL == 's3':
@@ -17,10 +20,10 @@ if config.STORAGE_IMPL == 's3':
 else:
     storage = lib.storage.LocalStorage()
 
-if False:
-    db = DynamoDatabase()
-else:
+if config.DYNAMO_IMPL == 'mock':
     db = MockDatabase()
+else:
+    db = DynamoDatabase()
 
 # export config to javascript
 with open('../ui/src/config.js', 'w') as it:

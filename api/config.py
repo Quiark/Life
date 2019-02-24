@@ -25,10 +25,12 @@ API_BASE = 'https://AAAA-now.sh/api/'
 # LOCAL DEPLOYMENT (this flag is only used in this config)
 LOCAL = True
 STORAGE_IMPL = 's3'
+DYNAMO_IMPL = 'aws'
 
 if LOCAL:
     TEMPLATES = 'templates/'
     LOCAL_STORAGE = '/Users/roman/Devel/Life/runtime/'
 
+    DYNAMODB_LOCAL_PATH = '/Users/roman/Downloads'
 
     API_BASE = 'http://localhost:7004/'

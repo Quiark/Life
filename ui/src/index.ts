@@ -16,6 +16,10 @@ Vue.use(SureToast, {
   theme: 'warning'
 })
 
+// TODO: create image view container (otherwise no way to go back to previous state)
+//      it should also have feature to go to next item
+//      ideally without redownloading it
+
 // Tabbed container of groups
 let MainVue = Vue.component('main-vue', {
 	template: `<div id="root" class="">

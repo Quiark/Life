@@ -14,6 +14,7 @@ app = Flask(__name__)
 # TODO whitelist S3 static sites only
 CORS(app)
 # TODO facebook-less event management
+# TODO add a router to be able to go to specific content
 
 # --- middleware ---
 def to_popo(obj):
