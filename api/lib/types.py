@@ -2,10 +2,13 @@ from dataclasses import fields, is_dataclass
 import datetime
 import dataclasses
 import typing
-from typing import cast, List
+from typing import cast, List, Dict
 
 import lib.data
 
+
+def eq_origin(generictype, spectype):
+    return (generictype == spectype) or (spectype.__origin__ == generictype)
 
 class TypescriptDefs:
     tstypes = {
@@ -18,11 +21,12 @@ class TypescriptDefs:
         if is_dataclass(t):
             return t.__name__
         elif type(t) == type(List):
-            assert isinstance(t, typing._GenericAlias)
-            if t._name == 'List':
+            # only since python 3.7
+            #assert isinstance(t, typing._GenericAlias)
+            if eq_origin(List, t):
                 inner = self.to_ts_type(t.__args__[0])
                 return f"Array<{inner}>"
-            elif t._name == 'Dict':
+            elif eq_origin(Dict, t):
                 return 'object'
             else:
                 raise RuntimeError('unknown type')

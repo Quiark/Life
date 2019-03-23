@@ -23,9 +23,14 @@ Use signed cookies with CloudFront
 
 # Architecture
 
-Static files served from S3, including post HTML fragments and opening page.
+Static files served from S3, including opening page.
 
 API served from now.sh
+
+## Removing dependency on now.sh
+
+Perhaps could use Lambda@Edge but only JS -> maybe only a proxy to bypass api gateway?
+Can invoke other lambda either sync or async (using SNS).
 
 # API calls
 

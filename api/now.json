@@ -1,11 +1,16 @@
 {
     "version": 2,
-    "name": "python",
+    "name": "life",
     "builds": [
         { "src": "use_flask.py", "use": "@now/python", "config": {
-            "maxLambdaSize": "10mb" }}
+            "maxLambdaSize": "13mb" }}
     ],
     "routes": [
         {"src": "/api/.*", "dest": "/use_flask.py"}
-    ]
+    ],
+    "env": {
+        "API_ACCESS_KEY_ID": "AKIAI7F5ZNL3VDBNKK3Q",
+        "API_SECRET_ACCESS_KEY": "@aws_key_secret",
+        "API_LOCAL": "false"
+    }
 }

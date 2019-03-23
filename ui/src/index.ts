@@ -87,6 +87,7 @@ let MainVue = Vue.component('main-vue', {
 				let head = _(it.pages).keys().maxBy((i) => parseInt(i))
 				vm.groupObj = it
 				vm.currentPage = head
+                vm.updateContent()
 			})
 		},
 		currentPage: function() {
@@ -108,10 +109,11 @@ let MainVue = Vue.component('main-vue', {
 			return api(`user`)
 		},
 		updateContent: function() {
+            if (this.currentPage === null) return
 			let vm = this
 
 			this.getContent(this.current, this.currentPage).then(function(it) {
-                vm.content = it // TODO reverse order, probably on backend
+                vm.content = it
 			})
 		}
 	}

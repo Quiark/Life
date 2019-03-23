@@ -28,7 +28,7 @@ $primary-invert: $pink-invert;
 
 @import "../../node_modules/bulma/bulma";
 
-body {
+body, html {
     background-color: #f4f4f4;
 }
 

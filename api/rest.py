@@ -11,10 +11,7 @@ from lib.common import lstrip_if, display_timestamp
 from lib.posts import PostCreatorV2
 
 app = Flask(__name__)
-# TODO whitelist S3 static sites only
 CORS(app)
-# TODO facebook-less event management
-# TODO add a router to be able to go to specific content
 
 # --- middleware ---
 def to_popo(obj):
@@ -75,11 +72,15 @@ def user_must_ingroup(groupid: str):
 def hello_world():
     return 'Hello, World!'
 
-@app.route('/groups/<groupid>')
+@app.route('/api/hello')
+def api_hello_world():
+    return 'Hello, World api!'
+
+@app.route('/api/groups/<groupid>')
 def get_group(groupid):
     return respond(base.db.get_group(groupid))
 
-@app.route('/groups')
+@app.route('/api/groups')
 def get_groups():
     load_user()
     groupids = request.Life.user.groups
@@ -88,7 +89,7 @@ def get_groups():
     return respond([x for x in all if (x.groupid in groupids)])
 
 
-@app.route('/groups/<groupid>/page/<page>')
+@app.route('/api/groups/<groupid>/page/<page>')
 def get_posts_by_page(groupid, page):
     user_must_ingroup(groupid)
     result = base.db.get_posts_by_page(groupid, page)
@@ -96,7 +97,7 @@ def get_posts_by_page(groupid, page):
     return respond(result)
 
 
-@app.route('/groups/<groupid>/posts/<postid>/comments', methods=['POST'])
+@app.route('/api/groups/<groupid>/posts/<postid>/comments', methods=['POST'])
 def create_comment(groupid, postid):
     user_must_ingroup(groupid)
     dat = request.get_json()
@@ -107,12 +108,12 @@ def create_comment(groupid, postid):
     return 'ok'
 
 
-@app.route('/user')
+@app.route('/api/user')
 def get_user():
     load_user()
     return respond(request.Life.user)
 
-@app.route('/groups/unpublished/images')
+@app.route('/api/groups/unpublished/images')
 def get_unpublished_images():
     groupid = config.UNPUBLISHED_GROUP
     user_must_ingroup(groupid)
@@ -129,9 +130,7 @@ def get_unpublished_images():
 
     return respond(response)
 
-
-
-@app.route('/groups/unpublished/publish/<imageid>', methods=['POST'])
+@app.route('/api/groups/unpublished/publish/<imageid>', methods=['POST'])
 def publish(imageid: str):
     user_must_ingroup(config.UNPUBLISHED_GROUP)
     dat = typed_payload(PostPayload)

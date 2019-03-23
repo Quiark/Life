@@ -2,13 +2,16 @@ from typing import List, Dict, ClassVar, Optional
 from datetime import datetime
 import boto3
 import dataclasses
+import logging
+import hashlib
 from dataclasses import asdict, is_dataclass, fields
 
 import config
 import lib
 from lib.data import *
 from lib.database import Database
-from lib.common import first
+from lib.common import first, aws_api_args
+from lib.types import eq_origin
 
 def entity_to_dict(obj):
     t = type(obj)
@@ -29,10 +32,10 @@ def _from_item_typed(v: Dict, typ: Optional[type]):
     def assert_type(expected: Optional[type]):
         if typ == None: return None
         if expected == list:
-            if (typ != list) and (typ._name != 'List'):
+            if (typ != list) and (not eq_origin(List, typ)):
                 raise RuntimeError('Invalid list type')
         elif expected == dict:
-            if (typ != dict) and (not is_dataclass(typ)) and (typ._name != 'Dict'):
+            if (typ != dict) and (not is_dataclass(typ)) and (not eq_origin(Dict, typ)):
                 raise RuntimeError('Invalid dict type')
         else:
             assert(typ == expected), f"typ: {typ} expected: {expected}"
@@ -121,8 +124,14 @@ TABLE_POSTS = 'life-posts'
 
 class DynamoDatabase(Database):
     def __init__(self):
-        kwargs = {}
+        kwargs = aws_api_args()
         if config.DYNAMO_IMPL == 'local': kwargs['endpoint_url'] = 'http://localhost:8000'
+        kwargs['region_name'] = config.DYNAMODB_REGION
+
+        logging.debug('connecting using key id ' + kwargs.get('aws_access_key_id', ''))
+        hash = hashlib.sha256(kwargs.get('aws_secret_access_key', '').encode()).hexdigest()
+        logging.debug('connecting using sha256(secret): ' + hash)
+
         self.dynamo = boto3.client('dynamodb', **kwargs)
 
     def create_tables(self):
@@ -292,13 +301,28 @@ class DynamoAdmin(DynamoDatabase):
             self.dynamo.delete_item(TableName=name, Key={key: it[key]})
 
 
-    def fill_sample_data(self):
+    def fill_sample_data(self, with_posts=True):
         import lib.database
         mockdb = lib.database.MockDatabase()
-        mockdb.g1.pages = {}
-        mockdb.g2.pages = {}
+        if not with_posts:
+            mockdb.g1.pages = {}
+            mockdb.g2.pages = {}
         self.add_group(mockdb.g1)
         self.add_group(mockdb.g2)
         self.add_group(mockdb.g3)
         self.add_user(mockdb.users['admin'])
+
+        if with_posts:
+            mockdb.mock_post(mockdb.g2, '201701')
+            mockdb.mock_post(mockdb.g2, '201702')
+            mockdb.mock_post(mockdb.g2, '201704')
+            mockdb.mock_post(mockdb.g2, '201704')
+            mockdb.mock_post(mockdb.g1, '201601')
+
+            for i in mockdb.posts.values():
+                self._store_post(i)
+
+            #self.add_post(mockdb.p1)
+            #self.add_post(mockdb.p2)
+            #self.add_comment(mockdb.g1.groupid, mockdb.p1.postid, Comment(author='admin', text='autocommnt'))
 

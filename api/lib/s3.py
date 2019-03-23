@@ -4,10 +4,12 @@ from typing import List
 import boto3
 import config
 from lib.storage import Storage
+from lib.common import aws_api_args
 
 class S3Storage(Storage):
     def __init__(self):
-        self.s3 = boto3.client('s3')
+        kwargs = aws_api_args()
+        self.s3 = boto3.client('s3', **kwargs)
         self.bucket = config.BUCKET_NAME
 
     def strip_expected_prefix(self, prefix: str, fr: str) -> str:

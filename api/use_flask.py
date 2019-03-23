@@ -1,10 +1,17 @@
+import sys
+
+# have to be first to configure basic logging
+import logging
 import http.server
 from http.server import BaseHTTPRequestHandler
 from wsgiref.simple_server import WSGIRequestHandler
+
+log = logging.getLogger(None)
+# log.addHandler(logging.StreamHandler(sys.stdout))
+log.setLevel(logging.DEBUG)
+logging.info('... Starting Life app server ...')
+
 from rest import app
-
-
-
 
 class handler(WSGIRequestHandler):
     def __init__(self, request, client_address, server):
@@ -22,6 +29,7 @@ class handler(WSGIRequestHandler):
         env['CONTENT_LENGTH']=''
         env['SCRIPT_NAME'] = ''
         return env
+
 
 def runner():
     httpd = http.server.HTTPServer(('', 7004), handler)

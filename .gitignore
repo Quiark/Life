@@ -9,3 +9,4 @@ bundle.js.map
 ui/dist
 .dynamodb_creds.txt
 .mypy_cache
+env36

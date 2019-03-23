@@ -12,7 +12,11 @@ from lib.types import TypescriptDefs
 if config.DYNAMO_IMPL == 'local':
     os.environ['AWS_SHARED_CREDENTIALS_FILE'] = '../.dynamodb_local.txt'
 elif config.DYNAMO_IMPL == 'aws':
-    os.environ['AWS_SHARED_CREDENTIALS_FILE'] = '../.dynamodb_creds.txt'
+    if config.API_LOCAL:
+        os.environ['AWS_SHARED_CREDENTIALS_FILE'] = '../.dynamodb_creds.txt'
+    else:
+        # using env variables
+        pass
 
 
 if config.STORAGE_IMPL == 's3':
@@ -25,9 +29,10 @@ if config.DYNAMO_IMPL == 'mock':
 else:
     db = DynamoDatabase()
 
-# export config to javascript
-with open('../ui/src/config.js', 'w') as it:
-    c = config.__dict__
-    it.write('module.exports =' + json.dumps({ k: c[k] for k in c if k.upper() == k}))
+# export config to javascript TODO should be separate tool
+if config.API_LOCAL:
+    with open('../ui/src/config.js', 'w') as it:
+        c = config.__dict__
+        it.write('module.exports =' + json.dumps({ k: c[k] for k in c if k.upper() == k}))
 
-TypescriptDefs().write_types('../ui/src/data.ts')
+    TypescriptDefs().write_types('../ui/src/data.ts')
