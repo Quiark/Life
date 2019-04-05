@@ -300,6 +300,17 @@ class DynamoAdmin(DynamoDatabase):
         for it in items:
             self.dynamo.delete_item(TableName=name, Key={key: it[key]})
 
+    def create_user(self, u):
+        import secrets
+        u.token = secrets.token_hex()
+
+        self.add_user(u)
+        return f'{config.BUCKET_URL}/#/login/{u.id}/{u.token}'
+
+    def get_users(self):
+        response = self.dynamo.scan(TableName=TABLE_USERS)
+        return [entity_from_typed(x, User) for x in response['Items']]
+
 
     def fill_sample_data(self, with_posts=True):
         import lib.database

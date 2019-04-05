@@ -11,17 +11,18 @@ Vue.component('group-pagination', {
             <!-- <a class="pagination-previous">Previous</a>
             <a class="pagination-next">Next page</a> -->
             <ul class="pagination-list" v-for="page in pagenames">
-                <li><a 
+                <li><router-link
                         v-bind:class="[{ 'is-current': value === page[2]}, 'button', 'pagination-link', 'has-text-centered', display_class(page)]"
                         v-bind:key="page[2]"
-                        v-on:click="$emit('input', page[2])"
+                        v-bind:to="'/ui/group/' + groupid + '/page/' + page[2]"
+                        disabled-v-on-click="$emit('input', page[2])"
                         >
                     <span class="is-size-5">{{ page[0] }}</span>&nbsp;{{ page[1] }}
-                </a></li>
+                </router-link></li>
             </ul>
         </nav>
     `,
-    props: ['pages', 'value'],
+    props: ['pages', 'value', 'groupid'],
     computed: {
         pagenames: function() {
             let res = _.keys(this.pages).sort().map((it) => [
@@ -35,7 +36,6 @@ Vue.component('group-pagination', {
     methods: {
 
         display_class: function(page) {
-            console.log('dispaly class', page)
             return rainbow_class(page[2])
         }
 

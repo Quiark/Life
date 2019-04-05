@@ -13,10 +13,10 @@ class LoginTool {
     // where should this be called?
     public read_login() {
         let parts = window.location.hash.split('/')
-        if (parts[0] === '#login') {
+        if (parts[1] === 'login') {
             currentUser = {
-                id: parts[1],
-                token: parts[2]
+                id: parts[2],
+                token: parts[3]
             }
             localStorage.setItem('currentUser', JSON.stringify(currentUser))
 

@@ -6,12 +6,14 @@ from datetime import datetime
 from typing import Dict
 import base
 import config
+import logging
 from lib.data import Comment, Post, Group, User, LifeApp, PostPayload
 from lib.common import lstrip_if, display_timestamp
 from lib.posts import PostCreatorV2
 
 app = Flask(__name__)
-CORS(app)
+logging.info(f'CORS on {config.BUCKET_URL}')
+CORS(app, origins=config.BUCKET_URL)
 
 # --- middleware ---
 def to_popo(obj):

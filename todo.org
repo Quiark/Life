@@ -2,14 +2,15 @@
 
 
 - [-] actually deploy it
-  - [ ] add CORS to whitelist S3 only
+  - [X] add CORS to whitelist S3 only
   - [ ] how does logging (not) work?
   - [X] apparently routing using /api/ and what is in rest.py doesnt match
   - [ ] respond with full errors ? coz hard to debug
   - [X] AWS account key
-  - [ ] port it to 3.6 -- have to run it with that locally too .. type error
+  - [X] port it to 3.6 -- have to run it with that locally too .. type error
 - [ ] add auth to S3 images
-- [ ] router to go to specific content
+- [X] router to go to specific content
+  - [ ] go to a specific content even after using a login link
 - [ ] create component for displaying image
 - [ ] user easy creation
 - [ ] user picture

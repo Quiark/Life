@@ -22,3 +22,15 @@ cd ui
 cd api
 ../env/bin/python use_flask.py
 ```
+
+## python environment
+
+Since the lambda runtime is py3.6, we need to install that version locally. One way to do that 
+is using nix. In a `shell.nix` file we require the attribute `nixpkgs.python36Full` and then
+create a venv from that
+
+```
+python -m venv env36
+. env36/bin/activate
+pip install -r requirements.txt
+```

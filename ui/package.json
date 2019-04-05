@@ -29,7 +29,8 @@
   "dependencies": {
     "axios": "^0.18.0",
     "lodash": "^4.17.11",
-    "whatwg-fetch": "^3.0.0",
-    "vue-sure-toast": "1.1.0"
+    "vue-router": "^3.0.2",
+    "vue-sure-toast": "1.1.0",
+    "whatwg-fetch": "^3.0.0"
   }
 }
