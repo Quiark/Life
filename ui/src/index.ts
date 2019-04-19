@@ -11,6 +11,7 @@ import * as config from './config.js'
 import './group-pagination'
 import './post-full'
 import './unpublished'
+import './upload'
 
 Vue.use(SureToast, {
   position: 'top-center',
@@ -31,7 +32,6 @@ let UserProfile = Vue.component('user-profile', {
 // Tabbed container of groups
 let GroupsDisplay = Vue.component('groups-display', {
 	template: `<div id="root" class="">
-    {{ current }}
 		<div class="groups-tabs tabs is-medium">
 			<ul>
 				<li	v-for="group in groups"
@@ -171,7 +171,7 @@ let router = new VueRouter({
     base: './',
     routes: [
         { path: '/', component: GroupsDisplay },
-        { path: '/ui/user/:userid', component: UserProfile },
+        { path: '/ui/user/:userid?', component: UserProfile },
         { path: '/ui/group/:groupid', component: GroupsDisplay },
         { path: '/ui/group/:groupid/page/:pageid', component: GroupsDisplay },
         // this would be a different component
@@ -184,17 +184,17 @@ let router = new VueRouter({
 
 let AppHeader = Vue.component('app-header', {
     template: `<div>
-        <nav class="level">
-            <div class="level-left">
-                <div class="level-item">a regrettable agreement!</div>
-            </div>
-            <div class="level-right">
-                <div class="level-item">{ user.name }</div>
-            </div>
-        </nav>
+        <!-- <div>
+            User: <router-link to="/ui/user">{{ userid }}</router-link>
+        </div> -->
         <router-view />
     </div>`,
-    router
+    router,
+    computed: {
+        userid: function() {
+            return loginTool.userid()
+        }
+    }
 })
 
 let v = new Vue({

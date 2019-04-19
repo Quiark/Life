@@ -141,3 +141,8 @@ def publish(imageid: str):
     pc = PostCreatorV2(base.storage, base.db, imageid)
     pc.publish(dat.groupid, dat.text)
     return respond({})
+
+@app.route('/api/upload-details')
+def get_upload_details():
+    user_must_ingroup(config.UNPUBLISHED_GROUP)
+    return respond(base.storage.get_upload_details())

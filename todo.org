@@ -8,6 +8,9 @@
   - [ ] respond with full errors ? coz hard to debug
   - [X] AWS account key
   - [X] port it to 3.6 -- have to run it with that locally too .. type error
+- [ ] scripts for deploy
+      - [ ] update generated config.js
+      - [X] upload to S3
 - [ ] add auth to S3 images
 - [X] router to go to specific content
   - [ ] go to a specific content even after using a login link

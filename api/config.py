@@ -9,6 +9,7 @@ BUCKET_URL='https://life.rplasil.name'
 
 # todo
 UPLOAD_BUCKET='life-upload'
+UPLOAD_ENDPOINT='ap-northeast-2'
 UNPUBLISHED_GROUP='keCxhEChibx-unpublished'
 
 IMG_PREVIEW_PREFIX='p300-'
@@ -28,14 +29,14 @@ STORAGE_PREFIX = 'storage/'
 API_BASE = 'https://life.quiark.now.sh/api/'
 
 # LOCAL DEPLOYMENT (this flag is only used in this config)
-LOCAL = True
+LOCAL = False
 
 # is api running from local machine or now.sh
 API_LOCAL = (os.environ.get('API_LOCAL', 'true')) == 'true'
 
 if LOCAL:
-    STORAGE_IMPL = 'local'
-    DYNAMO_IMPL = 'local'
+    STORAGE_IMPL = 's3'
+    DYNAMO_IMPL = 'aws'
 
     LOCAL_STORAGE = '/Users/roman/Devel/Life/runtime/'
 
@@ -44,7 +45,9 @@ if LOCAL:
     API_BASE = 'http://localhost:7004/api/'
 
     BUCKET_URL = 'http://localhost:7009'
+    LOGLEVEL='INFO'
 
 else:
     STORAGE_IMPL = 's3'
     DYNAMO_IMPL = 'aws'
+    LOGLEVEL='DEBUG'

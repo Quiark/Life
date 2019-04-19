@@ -27,3 +27,6 @@ def aws_api_args() -> dict:
             'aws_access_key_id': os.environ['API_ACCESS_KEY_ID'],
             'aws_secret_access_key': os.environ['API_SECRET_ACCESS_KEY']
         }
+
+def mk_login_url(user): # todo later it will support login & go to a post
+    return f'{config.BUCKET_URL}/#/login/{user.id}/{user.token}'

@@ -4,6 +4,7 @@ import { api, api_post, file_api, file_html, loginTool, rainbow_class, toastTool
 import * as config from './config.js'
 import { Group, PostPayload } from './data'
 import './group-list'
+import './upload'
 
 class Item {
     id: string
@@ -82,6 +83,7 @@ Vue.component('unpublished', {
                 </span>
                 <span>Refresh</span>
             </a>
+            <upload-box />
             <unpublished-item v-for="it in items" :key="it.id" :it="it" :grouplist="grouplist" v-on:published="onItemPublished(it)" />
         </div>
     `,

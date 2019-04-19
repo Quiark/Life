@@ -10,3 +10,5 @@ ui/dist
 .dynamodb_creds.txt
 .mypy_cache
 env36
+*.pyc
+bundle.js

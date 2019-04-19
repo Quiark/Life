@@ -5,12 +5,13 @@ import dataclasses
 import logging
 import hashlib
 from dataclasses import asdict, is_dataclass, fields
+from pprint import pprint
 
 import config
 import lib
 from lib.data import *
 from lib.database import Database
-from lib.common import first, aws_api_args
+from lib.common import first, aws_api_args, mk_login_url
 from lib.types import eq_origin
 
 def entity_to_dict(obj):
@@ -298,18 +299,26 @@ class DynamoAdmin(DynamoDatabase):
         name = TABLE_POSTS
         items = self.dynamo.scan(TableName=name)['Items']
         for it in items:
-            self.dynamo.delete_item(TableName=name, Key={key: it[key]})
+            self.dynamo.delete_item(TableName=name, Key={
+                'partitionid': it['partitionid'],
+                'postid': it['postid']
+                })
 
     def create_user(self, u):
         import secrets
         u.token = secrets.token_hex()
 
         self.add_user(u)
-        return f'{config.BUCKET_URL}/#/login/{u.id}/{u.token}'
+        return mk_login_url(u)
 
     def get_users(self):
         response = self.dynamo.scan(TableName=TABLE_USERS)
         return [entity_from_typed(x, User) for x in response['Items']]
+
+    def print_user(self, uid):
+        user = self.get_user(uid)
+        pprint(user)
+        print(mk_login_url(user))
 
 
     def fill_sample_data(self, with_posts=True):

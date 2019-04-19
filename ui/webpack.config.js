@@ -1,13 +1,12 @@
+// also used for production compilation
 module.exports = {
-    mode: "development",
+    mode: 'production',
+
     entry: "./src/index.ts",
     output: {
         filename: "bundle.js",
         path: __dirname + "/dist"
     },
-
-    // Enable sourcemaps for debugging webpack's output.
-    devtool: "source-map",
 
     resolve: {
         // Add '.ts' and '.tsx' as resolvable extensions.
@@ -50,15 +49,6 @@ module.exports = {
     externals: {
         // "react": "React",
         // "react-dom": "ReactDOM"
-    },
-
-    performance: {
-        hints: false
-    },
-
-    devServer: {
-        contentBase: [__dirname + '/dist', __dirname + '/../runtime', __dirname],
-        port: 7009
     }
 };
 

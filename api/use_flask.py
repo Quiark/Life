@@ -5,10 +5,11 @@ import logging
 import http.server
 from http.server import BaseHTTPRequestHandler
 from wsgiref.simple_server import WSGIRequestHandler
+import config
 
 log = logging.getLogger(None)
 # log.addHandler(logging.StreamHandler(sys.stdout))
-log.setLevel(logging.DEBUG)
+log.setLevel(getattr(logging, config.LOGLEVEL))
 logging.info('... Starting Life app server ...')
 
 from rest import app
