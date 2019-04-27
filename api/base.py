@@ -36,3 +36,8 @@ if config.API_LOCAL:
         it.write('module.exports =' + json.dumps({ k: c[k] for k in c if k.upper() == k}))
 
     TypescriptDefs().write_types('../ui/src/data.ts')
+
+if config.DYNAMO_IMPL == 'local':
+    import lib.dynamodb
+    admin = lib.dynamodb.DynamoAdmin()
+    print(admin.get_users())

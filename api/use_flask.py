@@ -7,10 +7,6 @@ from http.server import BaseHTTPRequestHandler
 from wsgiref.simple_server import WSGIRequestHandler
 import config
 
-log = logging.getLogger(None)
-# log.addHandler(logging.StreamHandler(sys.stdout))
-log.setLevel(getattr(logging, config.LOGLEVEL))
-logging.info('... Starting Life app server ...')
 
 from rest import app
 
@@ -37,4 +33,5 @@ def runner():
     httpd.serve_forever()
 
 if __name__ == '__main__':
-    runner()
+    app.run()
+    #runner()

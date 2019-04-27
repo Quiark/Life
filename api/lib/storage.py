@@ -32,3 +32,6 @@ class LocalStorage(Storage):
     def rename(self, fr: str, to: str):
         os.rename(join(self.path, fr),
                   join(self.path, to))
+
+    def get_upload_details(self):
+        return {}

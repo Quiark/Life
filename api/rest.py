@@ -1,4 +1,5 @@
 import os
+import logging
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from dataclasses import asdict, is_dataclass, dataclass
@@ -6,13 +7,16 @@ from datetime import datetime
 from typing import Dict
 import base
 import config
-import logging
 from lib.data import Comment, Post, Group, User, LifeApp, PostPayload
 from lib.common import lstrip_if, display_timestamp
 from lib.posts import PostCreatorV2
 
+log = logging.getLogger(None)
+# log.addHandler(logging.StreamHandler(sys.stdout))
+log.setLevel(getattr(logging, config.LOGLEVEL))
+logging.info('... Starting Life app server ...')
+
 app = Flask(__name__)
-logging.info(f'CORS on {config.BUCKET_URL}')
 CORS(app, origins=config.BUCKET_URL)
 
 # --- middleware ---

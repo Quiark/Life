@@ -1,5 +1,4 @@
 . env36/bin/activate.fish
-help_session
 
 function api_server
     python use_flask.py
@@ -32,3 +31,5 @@ function help_session
     echo api_server
     echo ui_deploy
 end
+
+help_session

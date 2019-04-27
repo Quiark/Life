@@ -2,12 +2,12 @@
     "version": 2,
     "name": "life",
     "builds": [
-        { "src": "use_flask.py", "use": "@now/python", "config": {
+        { "src": "rest.py", "use": "@now/python@canary", "config": {
             "maxLambdaSize": "13mb" }},
         { "src": "bundle.js", "use": "@now/static" }
     ],
     "routes": [
-        {"src": "/api/.*", "dest": "/use_flask.py"}
+        {"src": "/api/.*", "dest": "/rest.py"}
     ],
     "env": {
         "API_ACCESS_KEY_ID": "AKIAI7F5ZNL3VDBNKK3Q",
