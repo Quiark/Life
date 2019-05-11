@@ -29,13 +29,13 @@ STORAGE_PREFIX = 'storage/'
 API_BASE = 'https://life.quiark.now.sh/api/'
 
 # LOCAL DEPLOYMENT (this flag is only used in this config)
-LOCAL = False
+LOCAL = True
 
 # is api running from local machine or now.sh
 API_LOCAL = (os.environ.get('API_LOCAL', 'true')) == 'true'
 
-if LOCAL:
-    STORAGE_IMPL = 's3'
+if API_LOCAL and LOCAL:
+    STORAGE_IMPL = 'local'
     DYNAMO_IMPL = 'aws'
 
     LOCAL_STORAGE = '/Users/roman/Devel/Life/runtime/'

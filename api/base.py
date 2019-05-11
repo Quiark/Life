@@ -2,6 +2,7 @@ import os
 import json
 # TODO remove jinja2 from lambda installation
 import config
+import lib.common
 from lib.storage import LocalStorage
 import lib.s3
 from lib.posts import PostCreator
@@ -29,13 +30,9 @@ if config.DYNAMO_IMPL == 'mock':
 else:
     db = DynamoDatabase()
 
-# export config to javascript TODO should be separate tool
+# export config to javascript
 if config.API_LOCAL:
-    with open('../ui/src/config.js', 'w') as it:
-        c = config.__dict__
-        it.write('module.exports =' + json.dumps({ k: c[k] for k in c if k.upper() == k}))
-
-    TypescriptDefs().write_types('../ui/src/data.ts')
+    lib.common.export_defs('../ui/src')
 
 if config.DYNAMO_IMPL == 'local':
     import lib.dynamodb

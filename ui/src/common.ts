@@ -90,8 +90,8 @@ export function file_html(path: string): Promise<string> {
 
 export function imgurl(groupid: string, name: string): string {
     let start = ''
-    if (config.LOCAL && config.STORAGE_IMPL == 's3')
-        start = config.BUCKET_URL
+    if (config.API_LOCAL && config.STORAGE_IMPL == 's3')
+        start = config.BUCKET_URL + '/'
 
     /*
 https://s3.ap-northeast-2.amazonaws.com/life.rplasil.name/storage/keCxhEChibx-unpublished/p300-217bb62ab8be5f8c1d519d22cf8182cd.jpg

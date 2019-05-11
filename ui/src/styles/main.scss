@@ -36,11 +36,22 @@ body, html {
     margin: 1ex 0ex;
 }
 
+nav.navbar-main {
+    display: flex;
+    background-color: #f0f0f0 !important;
+    border-bottom: solid 1px #dddddd;
+
+    .navbar-elem {
+        margin: auto 1ex;
+    }
+}
+
 .life-comment {
-    margin-bottom: 0.5rem !important;
+    margin-bottom: 0.1rem !important;
 
     .message-body {
         padding: 0.5rem;
+        min-height: 64px; /* avatar size */
     }
 
     .comment-meta {
@@ -48,13 +59,50 @@ body, html {
     }
 }
 
+.comment-writing {
+    display: flex;
+
+    .comment-textarea {
+        flex-grow: 1;
+    }
+}
+
+.life-comment,.media + .media {
+    margin-top: 0px;
+    padding-top: 0px;
+}
+
 .group-content {
+
+    padding: 1em;
 
     .card {
         margin-top: 1ex;
         border-radius: 3px;
+
+        .content {
+            font-size: 110%;
+        }
+
+        .textarea {
+            height: 3.4ex;
+            padding-top: 0.1ex;
+            padding-bottom: 0.1ex;
+        }
     }
 
+    .card-footer a {
+        color: #222222;
+        font-size: 90%;
+        margin: 2px;
+    }
+
+}
+
+.avatar {
+    img {
+        border-radius: 4px;
+    }
 }
 
 .rainbow-edge0 {

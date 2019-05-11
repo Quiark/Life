@@ -33,5 +33,5 @@ def runner():
     httpd.serve_forever()
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=7004)
     #runner()

@@ -17,11 +17,16 @@ function dynamodb
 end
 
 function ui_deploy
+    # requires the python env
+    set -x API_LOCAL false
+    python tools.py exportconfig
+
     cd ui
     npm run build
+
     cd ..
     cp ui/dist/bundle.js api/bundle.js
-    python tools.py ui_deploy
+    #python tools.py ui_deploy
 end
 
 function help_session

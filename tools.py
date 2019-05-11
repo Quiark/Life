@@ -7,7 +7,7 @@ import argparse
 
 
 parser = argparse.ArgumentParser(description='Life tooling')
-parser.add_argument('operation', type=str, choices=['dynamodb', 'ui_deploy'],
+parser.add_argument('operation', type=str, choices=['dynamodb', 'ui_deploy', 'exportconfig'],
                     help='an integer for the accumulator')
 
 args = parser.parse_args()
@@ -32,9 +32,25 @@ def ui_deploy():
 
     storage = lib.s3.S3Storage()
     storage.upload_file('ui/index.prod.html', 'index.html')
-    storage.upload_file('ui/dist/bundle.js', 'bundle.js')
+    storage.upload_file('ui/favicon.png', 'favicon.png')
+    #storage.upload_file('ui/dist/bundle.js', 'bundle.js')
+
+    def upload_avatar(name):
+        storage.upload_file('runtime/storage/avatars/' + name + '.jpg', 'storage/avatars/' + name + '.jpg')
+
+    upload_avatar('admin')
+    upload_avatar('katrina')
+
+def export_config():
+    sys.path.append('api')
+    import lib.common
+
+    lib.common.export_defs('ui/src')
+
 
 if args.operation == 'dynamodb':
     dynamodb()
 elif args.operation == 'ui_deploy':
     ui_deploy()
+elif args.operation == 'exportconfig':
+    export_config()
