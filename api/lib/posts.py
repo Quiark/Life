@@ -66,6 +66,7 @@ class PostCreatorV2():
         self.unpub_id = unpub_id
 
     def publish(self, groupid: str, text: str):
+        if text == None: text = '  ' # dynamodb abhors an empty string
         data = Post(
                 groupid,
                 None,  # to be filled later

@@ -3,15 +3,19 @@ import Vue from "vue";
 import 'whatwg-fetch';
 import SureToast from 'vue-sure-toast';
 import VueRouter from 'vue-router';
+import * as vll from 'vue-lazyload';
+import VueLazyload from 'vue-lazyload/types'
+import LightBox from 'vue-image-lightbox'
 
 import './styles/main.scss';
 import { Post, Group, Comment, User } from './data'
-import { api, api_post, file_api, file_html, loginTool, toastTool } from './common'
+import { imgurl, api, api_post, file_api, file_html, loginTool, toastTool } from './common'
 import * as config from './config.js'
 import './group-pagination'
 import './post-full'
 import './unpublished'
 import './upload'
+import { AppHeader } from './app-header'
 
 Vue.use(SureToast, {
   position: 'top-center',
@@ -19,6 +23,7 @@ Vue.use(SureToast, {
 })
 
 Vue.use(VueRouter)
+Vue.use(vll as unknown as (typeof VueLazyload)) // facepalm
 
 // TODO: create image view container (otherwise no way to go back to previous state)
 //      it should also have feature to go to next item
@@ -45,13 +50,20 @@ let GroupsDisplay = Vue.component('groups-display', {
 			</ul>
 		</div>
 		<div class="group-content">
+            <LightBox 
+                :images="images" 
+                :show-light-box="false" 
+                :show-caption="true"
+                ref="lightbox" />
             <template v-if="isNotUnpublished">
                 <group-pagination v-bind:pages="groupObj.pages" v-bind:groupid="current" />
 
                 <post-full 
                     v-for="p in content"
                     v-bind:key="p.postid"
-                    v-bind:obj="p">
+                    v-bind:obj="p"
+                    v-on:post-enlarge="openLightbox"
+                    >
                 </post-full>
             </template>
             <unpublished v-else>
@@ -59,6 +71,10 @@ let GroupsDisplay = Vue.component('groups-display', {
 		</div>
 	</div>
 	`,
+
+    components: {   // local registration
+        'LightBox': LightBox
+    },
     data: function() {
         return {
             groups: [] as string[],
@@ -77,6 +93,7 @@ let GroupsDisplay = Vue.component('groups-display', {
             return this.current != config.UNPUBLISHED_GROUP
         },
         current: function(): string {
+            //console.log(this.$route.params)
             // could use props support in vue-router
             return this.$route.params.groupid
         },
@@ -86,6 +103,13 @@ let GroupsDisplay = Vue.component('groups-display', {
             //  - doesn't run watch
             let head = _(this.groupObj.pages).keys().maxBy((i) => parseInt(i))
             return this.$route.params.pageid || head
+        },
+        images: function() {
+            return this.content.map((it) => ({
+                'thumb': imgurl(it.groupid, config.IMG_PREVIEW_PREFIX + it.postid + '.jpg'),
+                'src': imgurl(it.groupid, it.postid + '.jpg'),
+                'caption': it.text
+            }))
         }
     },
 
@@ -140,13 +164,26 @@ let GroupsDisplay = Vue.component('groups-display', {
 			let vm = this
 
 			this.getContent(this.current, this.currentPage).then(function(it) {
-                vm.content = it
+                vm.content = vm.filterContent(it)
 			})
+        },
+        filterContent: function(alldata) {
+            let selectedPost = this.$route.params.postid
+            if (selectedPost == undefined) return alldata
+            else return _.filter(alldata, (x) => x.postid == selectedPost)
         },
         go: function(groupid, pageid) {
             var path = '/ui/group/' + groupid
             if (pageid) path += '/' + pageid
             this.$router.push(path)
+        },
+        openLightbox: function(evt) {
+            if (evt.groupid != this.current) {
+                console.log(evt)
+                return
+            }
+            let ix = _.findIndex(this.content, (it: Post) => it.postid == evt.postid)
+            this.$refs.lightbox.showImage(ix)
         }
 	}
 })
@@ -192,49 +229,9 @@ let router = new VueRouter({
 })
 
 
-let AppHeader = Vue.component('app-header', {
-    template: `<div>
-        <!-- <div>
-        </div> -->
-        <nav class="navbar navbar-main" role="navigation" aria-label="main navigation">
-            <div class="navbar-elem">
-                <!-- <img src="favicon.png" width="32" height="32" /> -->
-                <router-link to="/">
-                    <h4 class="title is-4">Roman's family</h4>
-                </router-link>
-            </div>
-            <div class="navbar-elem">
-                <router-link to="/ui/user" class="button">
-                    <i class="fas fa-address-card"></i>&nbsp;
-                    {{ userid }}
-                </router-link>
-            </div>
-            <div class="navbar-elem" v-if="canPublish">
-                <router-link class="button" v-bind:to="uploadLink">
-                    <i class="fas fa-caret-square-up"></i>&nbsp;
-                    Upload
-                </router-link>
-            </div>
-        </nav>
-        <router-view />
-    </div>`,
-    router,
-
-    computed: {
-        userid: function() {
-            return loginTool.userid()
-        },
-        canPublish: function() {
-            // TODO well get it from user
-            return false
-        },
-        uploadLink: function() {
-            return '/ui/group/' + config.UNPUBLISHED_GROUP
-        }
-    }
-})
 
 let v = new Vue({
+    router,
     el: "#vue",
     computed: {
         ViewComponent () {

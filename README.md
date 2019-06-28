@@ -34,3 +34,11 @@ python -m venv env36
 . env36/bin/activate
 pip install -r requirements.txt
 ```
+
+## image resizer lambda
+
+To build the zip, use this:
+
+`npm pack`
+
+Manually built zip cannot be used because files should have read for all permissions.

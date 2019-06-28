@@ -27,6 +27,7 @@ $primary-invert: $pink-invert;
 */
 
 @import "../../node_modules/bulma/bulma";
+@import '../../node_modules/vue-image-lightbox/dist/vue-image-lightbox.min.css';
 
 body, html {
     background-color: #f4f4f4;
@@ -91,10 +92,15 @@ nav.navbar-main {
         }
     }
 
+    .card-footer {
+        border-top: 0 !important;
+    }
+
     .card-footer a {
         color: #222222;
         font-size: 90%;
         margin: 2px;
+        padding-left: 1.5rem;
     }
 
 }
@@ -127,4 +133,12 @@ nav.navbar-main {
 
 .rainbow-edge5 {
     box-shadow: 0 2px 6px rgba(255, 0, 255, 0.18), 0 0 0 1px rgba(255, 0, 224, 0.28);
+}
+
+.vue-lb-info {
+    position: static !important;
+}
+
+img.vue-lb-modal-image {
+    image-orientation: from-image;
 }

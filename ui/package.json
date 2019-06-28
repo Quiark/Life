@@ -31,6 +31,8 @@
   "dependencies": {
     "axios": "^0.18.0",
     "lodash": "^4.17.11",
+    "vue-image-lightbox": "^6.2.0",
+    "vue-lazyload": "^1.2.6",
     "vue-router": "^3.0.2",
     "vue-sure-toast": "1.1.0",
     "webpack-merge": "^4.2.1",

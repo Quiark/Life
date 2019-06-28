@@ -38,8 +38,11 @@ def ui_deploy():
     def upload_avatar(name):
         storage.upload_file('runtime/storage/avatars/' + name + '.jpg', 'storage/avatars/' + name + '.jpg')
 
-    upload_avatar('admin')
-    upload_avatar('katrina')
+    #upload_avatar('admin')
+    #upload_avatar('katrina')
+    upload_avatar('jitka')
+    upload_avatar('lucyngai')
+    upload_avatar('ondra')
 
 def export_config():
     sys.path.append('api')

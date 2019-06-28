@@ -12,12 +12,10 @@ UPLOAD_BUCKET='life-upload'
 UPLOAD_ENDPOINT='ap-northeast-2'
 UNPUBLISHED_GROUP='keCxhEChibx-unpublished'
 
-IMG_PREVIEW_PREFIX='p300-'
+IMG_PREVIEW_PREFIX='p500-'
 IMG_PREVIEW_SIZE=300
 IMG_EXT='.jpg'
 
-FIRST_GROUP='avz84Ok3xhPBtkoNne-family'
-SECOND_GROUP = 'bugcp-kungfu'
 
 DYNAMODB_REGION = 'ap-northeast-2'
 

@@ -346,3 +346,12 @@ class DynamoAdmin(DynamoDatabase):
             #self.add_post(mockdb.p2)
             #self.add_comment(mockdb.g1.groupid, mockdb.p1.postid, Comment(author='admin', text='autocommnt'))
 
+    def delete_post(self, groupid: str, postid: str):
+        # doesn't handle moving items if one in middle got deleted
+        self.dynamo.delete_item(
+            TableName=TABLE_POSTS,
+            Key={
+                    'partitionid': _to_typed(lib.data.Post_partition_id(groupid, postid)),
+                    'postid': _to_typed(postid)
+                }
+        )

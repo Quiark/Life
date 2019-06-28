@@ -16,7 +16,7 @@ function dynamodb
     python tools.py dynamodb
 end
 
-function ui_deploy
+function ui_build
     # requires the python env
     set -x API_LOCAL false
     python tools.py exportconfig
@@ -26,7 +26,6 @@ function ui_deploy
 
     cd ..
     cp ui/dist/bundle.js api/bundle.js
-    #python tools.py ui_deploy
 end
 
 function help_session
@@ -34,7 +33,7 @@ function help_session
     echo notebook
     echo frontend_server
     echo api_server
-    echo ui_deploy
+    echo ui_build
 end
 
 help_session

@@ -35,21 +35,23 @@ class Database:
 
 class MockDatabase(Database):
     def __init__(self):
+        FIRST_GROUP = 'aaabb'
+        SECOND_GROUP = 'zzz'
         self.posts = {}
         self.groups = {}
         self.users = {'admin': User('admin', 'Adminus', groups=[
-            config.FIRST_GROUP,
-            config.SECOND_GROUP,
+            FIRST_GROUP,
+            SECOND_GROUP,
             config.UNPUBLISHED_GROUP
             ], token='abcd_kocka_heslo')}
 
         self.g1 = Group(
-                groupid=config.FIRST_GROUP,
+                groupid=FIRST_GROUP,
                 name='Family',
                 pages={})
 
         self.g2 = Group(
-                groupid=config.SECOND_GROUP,
+                groupid=SECOND_GROUP,
                 name='Kung-fu',
                 pages={
                     '201701': 1,
@@ -67,7 +69,7 @@ class MockDatabase(Database):
         self.add_group(self.g3)
 
         self.p1 = Post(
-            groupid=config.SECOND_GROUP,
+            groupid=SECOND_GROUP,
             postid=None,
             comments=[],
             time=datetime.utcnow(),
@@ -75,7 +77,7 @@ class MockDatabase(Database):
         )
 
         self.p2 = Post(
-            groupid=config.SECOND_GROUP,
+            groupid=SECOND_GROUP,
             postid=None,
             comments=[
                 Comment('gaga', 'hi', datetime.utcnow()),

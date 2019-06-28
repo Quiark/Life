@@ -15,7 +15,7 @@ Vue.component('upload-box', {
         <div class="fallback">
             <div for="file">Upload picture</div>
             <input name="file" type="file" class="button" />
-            <input type="submit" class="button" />
+            <input type="submit" class="button" value="Upload" />
          </div>
       </form>
 

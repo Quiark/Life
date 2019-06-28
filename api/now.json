@@ -9,6 +9,7 @@
     "routes": [
         {"src": "/api/.*", "dest": "/rest.py"}
     ],
+    "regions": ["icn1"],
     "env": {
         "API_ACCESS_KEY_ID": "AKIAI7F5ZNL3VDBNKK3Q",
         "API_SECRET_ACCESS_KEY": "@aws_key_secret",

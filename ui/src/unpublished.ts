@@ -29,7 +29,7 @@ Vue.component('unpublished-item', {
                             <textarea class="textarea" 
                                     placeholder="Write post message" 
                                     v-model="it.message"
-                                    rows="1" />
+                                    rows="3" />
                         </div>
                         <group-list v-model="sel_group" no_unpub="true" :groups="grouplist" />
                     </div>

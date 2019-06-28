@@ -10,10 +10,16 @@ Vue.component('post-full', {
     template: `
         <div class="post card" v-bind:class="display_class">
             <div class="card-content">
-                <p v-for="line in text_lines" class="content">
-                    {{ line }}
-                </p>
-                <img  v-bind:width="previewSize" v-bind:src="imgurl" />
+                <div class="content">
+                    <p v-for="line in text_lines">
+                        {{ line }}
+                    </p>
+                </div>
+                <img 
+                    v-bind:width="previewSize" 
+                    v-lazy="imgurl"
+                    @click="on_img_click"
+                    />
 
 				<comment-list v-bind:comments="obj.comments"/>
 				<div class="comment-writing">
@@ -29,9 +35,9 @@ Vue.component('post-full', {
 				</div>
             </div>
             <footer class="card-footer">
-				<a v-bind:href="posturl">
+				<router-link v-bind:to="posturl">
 					{{ obj.time }}
-				</a>
+				</router-link>
             </footer>
         </div>
     `,
@@ -48,7 +54,8 @@ Vue.component('post-full', {
             return imgurl(this.obj.groupid, config.IMG_PREVIEW_PREFIX + this.obj.postid + '.jpg')
 		},
 		posturl: function() {
-			return `/ui/groups/${ this.obj.groupid }/posts/${ this.obj.postid }`
+            // having the optional params on router makes the trailing / required
+            return `/ui/group/${ this.obj.groupid }/post/${ this.obj.postid }`
         },
         display_class: function() {
             return rainbow_class(this.obj.postid)
@@ -70,6 +77,9 @@ Vue.component('post-full', {
                     })
 					vm.commentInput = null
 			})
-		}
+        },
+        on_img_click: function() {
+            this.$emit('post-enlarge', this.obj)
+        }
 	}
 })
