@@ -56,7 +56,10 @@ let GroupsDisplay = Vue.component('groups-display', {
                 :show-caption="true"
                 ref="lightbox" />
             <template v-if="isNotUnpublished">
-                <group-pagination v-bind:pages="groupObj.pages" v-bind:groupid="current" />
+                <group-pagination v-bind:pages="groupObj.pages" 
+                                v-bind:groupid="current" 
+                                v-bind:loading="loading"
+                                v-on:reload="updateContent" />
 
                 <post-full 
                     v-for="p in content"
@@ -84,7 +87,8 @@ let GroupsDisplay = Vue.component('groups-display', {
                 pages: {}
             } as Group,
             content: [] as Post[],
-            user: null as User
+            user: null as User,
+            loading: false
         }
 	},
 
@@ -162,8 +166,10 @@ let GroupsDisplay = Vue.component('groups-display', {
 		updateContent: function() {
             if (!this.currentPage) return
 			let vm = this
+            this.loading = true
 
 			this.getContent(this.current, this.currentPage).then(function(it) {
+                vm.loading = false
                 vm.content = vm.filterContent(it)
 			})
         },

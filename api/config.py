@@ -48,4 +48,4 @@ if API_LOCAL and LOCAL:
 else:
     STORAGE_IMPL = 's3'
     DYNAMO_IMPL = 'aws'
-    LOGLEVEL='DEBUG'
+    LOGLEVEL='INFO'

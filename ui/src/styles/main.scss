@@ -142,3 +142,11 @@ nav.navbar-main {
 img.vue-lb-modal-image {
     image-orientation: from-image;
 }
+
+.rotating {
+    animation: rotation 4s linear infinite;
+}
+
+@keyframes rotation {
+    100% { transform: rotate(360deg); }
+}

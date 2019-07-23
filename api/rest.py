@@ -62,6 +62,7 @@ def load_user():
             found = base.db.get_user(id)
             if (found != None) and (found.token == token):
                 request.Life.user = found
+                logging.info('request from {} for {}'.format(found.name, request.path))
             else:
                 raise AuthorizationError('incorrect password')
         request.Life.inited = True

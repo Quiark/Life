@@ -10,6 +10,8 @@ Vue.component('group-pagination', {
         <nav id="group-pagination" class="pagination" role="navigation" aria-label="pagination">
             <!-- <a class="pagination-previous">Previous</a>
             <a class="pagination-next">Next page</a> -->
+            <a v-bind:class="['button', { 'rotating' : loading }]" 
+                v-on:click="$emit('reload')"><i class="fas fa-sync">&nbsp;</i></a>
             <ul class="pagination-list" v-for="page in pagenames">
                 <li><router-link
                         v-bind:class="[{ 'is-current': value === page[2]}, 'button', 'pagination-link', 'has-text-centered', display_class(page)]"
@@ -22,7 +24,7 @@ Vue.component('group-pagination', {
             </ul>
         </nav>
     `,
-    props: ['pages', 'value', 'groupid'],
+    props: ['pages', 'value', 'groupid', 'loading'],
     computed: {
         pagenames: function() {
             let res = _.keys(this.pages).sort().map((it) => [
