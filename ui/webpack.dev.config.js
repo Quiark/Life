@@ -13,6 +13,6 @@ module.exports = merge(common, {
 
     devServer: {
         contentBase: [__dirname + '/dist', __dirname + '/../runtime', __dirname],
-        port: 7009
+        port: 7709
     }
 })

@@ -1,6 +1,7 @@
 import os
 import logging
 from flask import Flask, jsonify, request
+from flask import make_response
 from flask_cors import CORS
 from dataclasses import asdict, is_dataclass, dataclass
 from datetime import datetime
@@ -10,6 +11,7 @@ import config
 from lib.data import Comment, Post, Group, User, LifeApp, PostPayload
 from lib.common import lstrip_if, display_timestamp
 from lib.posts import PostCreatorV2
+import lib.cfcookie
 
 log = logging.getLogger(None)
 # log.addHandler(logging.StreamHandler(sys.stdout))
@@ -79,10 +81,6 @@ def user_must_ingroup(groupid: str):
 def hello_world():
     return 'Hello, World!'
 
-@app.route('/api/hello')
-def api_hello_world():
-    return 'Hello, World api!'
-
 @app.route('/api/groups/<groupid>')
 def get_group(groupid):
     return respond(base.db.get_group(groupid))
@@ -118,7 +116,9 @@ def create_comment(groupid, postid):
 @app.route('/api/user')
 def get_user():
     load_user()
-    return respond(request.Life.user)
+    cooks = lib.cfcookie.BetterThanBoto().create_cookies()
+    return respond({'user': request.Life.user,
+                    'cfcookies': cooks})
 
 @app.route('/api/groups/unpublished/images')
 def get_unpublished_images():

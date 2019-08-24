@@ -121,7 +121,10 @@ let GroupsDisplay = Vue.component('groups-display', {
 		let vm = this
 
 		this.getUser().then(function(it) {
-			vm.user = it
+			vm.user = it.user
+            for (let k in it.cfcookies) {
+                document.cookie = `${ k }=${ it.cfcookies[k] };Secure`
+            }
         })
         this.getGroups().then(function(it) {
 			vm.groups = it

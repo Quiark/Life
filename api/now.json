@@ -3,7 +3,7 @@
     "name": "life",
     "builds": [
         { "src": "rest.py", "use": "@now/python@canary", "config": {
-            "maxLambdaSize": "13mb" }},
+            "maxLambdaSize": "18mb" }},
         { "src": "bundle.js", "use": "@now/static" }
     ],
     "routes": [

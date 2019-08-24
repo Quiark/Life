@@ -16,6 +16,8 @@ IMG_PREVIEW_PREFIX='p500-'
 IMG_PREVIEW_SIZE=300
 IMG_EXT='.jpg'
 
+CF_KEYPAIR='APKAIIIJVOWMALU743IA'
+CF_PRIVKEY_FILE='cf_privkey.pem'
 
 DYNAMODB_REGION = 'ap-northeast-2'
 
@@ -42,7 +44,7 @@ if API_LOCAL and LOCAL:
 
     API_BASE = 'http://localhost:7004/api/'
 
-    BUCKET_URL = 'http://localhost:7009'
+    BUCKET_URL = 'http://localhost:7709'
     LOGLEVEL='INFO'
 
 else:

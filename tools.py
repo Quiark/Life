@@ -20,7 +20,7 @@ def dynamodb():
     subprocess.run('java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb',
                     shell=True, cwd=config.DYNAMODB_LOCAL_PATH)
 
-def ui_deploy():
+def s3_deploy():
     sys.path.append('api')
     import config
     import lib.s3
@@ -40,9 +40,9 @@ def ui_deploy():
 
     #upload_avatar('admin')
     #upload_avatar('katrina')
-    upload_avatar('jitka')
-    upload_avatar('lucyngai')
-    upload_avatar('ondra')
+    #upload_avatar('jitka')
+    #upload_avatar('lucyngai')
+    #upload_avatar('ondra')
 
 def export_config():
     sys.path.append('api')
@@ -53,7 +53,7 @@ def export_config():
 
 if args.operation == 'dynamodb':
     dynamodb()
-elif args.operation == 'ui_deploy':
-    ui_deploy()
+elif args.operation == 's3_deploy':
+    s3_deploy()
 elif args.operation == 'exportconfig':
     export_config()
