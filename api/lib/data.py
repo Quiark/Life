@@ -22,6 +22,8 @@ class Post:
     # yes?
     text: str
     comments: List[Comment]
+    # jpg, mp4, ...
+    format: Optional[str] = None
     time: datetime = datetime.utcnow()
 
     def page(self) -> str:

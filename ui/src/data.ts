@@ -9,6 +9,7 @@ export interface Post {
 	postid: string;
 	text: string;
 	comments: Array<Comment>;
+	format: string;
 	time: string;
 }
 

@@ -2,6 +2,7 @@ import os
 import json
 import logging
 from os.path import join
+from datetime import datetime
 
 import config
 from lib.database import Database
@@ -58,30 +59,39 @@ class PostCreator():
 
 
 class PostCreatorV2():
-    def __init__(self, storage: Storage, db: Database, unpub_id: str):
+    def __init__(self, storage: Storage, db: Database, unpub_id: str, ext: str):
         self.storage = storage
         self.db = db
 
-        # without file ext or prefix
+        # with ext, no prefix
         self.unpub_id = unpub_id
+        #self.ext = os.path.splitext(unpub_id)[1].strip('.')
+        self.ext = ext
 
     def publish(self, groupid: str, text: str):
         if text == None: text = '  ' # dynamodb abhors an empty string
+        now = datetime.utcnow()
         data = Post(
                 groupid,
                 None,  # to be filled later
                 text,
-                []
+                [],
+                format=self.ext,
+                time=now
         )
         # save to DB .. these steps are not exactly atomic
         data = self.db.add_post(data)
 
         # move the file
         self.storage.rename(
-                f"{config.STORAGE_PREFIX}{config.UNPUBLISHED_GROUP}/{self.unpub_id}{config.IMG_EXT}",
-                f"{config.STORAGE_PREFIX}{groupid}/{data.postid}{config.IMG_EXT}"
+                f"{config.STORAGE_PREFIX}{config.UNPUBLISHED_GROUP}/{self.unpub_id}.{self.ext}",
+                f"{config.STORAGE_PREFIX}{groupid}/{data.postid}.{self.ext}"
         )
-        self.storage.rename(
-                f"{config.STORAGE_PREFIX}{config.UNPUBLISHED_GROUP}/{config.IMG_PREVIEW_PREFIX}{self.unpub_id}{config.IMG_EXT}",
-                f"{config.STORAGE_PREFIX}{groupid}/{config.IMG_PREVIEW_PREFIX}{data.postid}{config.IMG_EXT}"
-        )
+        try:
+            # preview is always a still picture .jpg
+            self.storage.rename(
+                    f"{config.STORAGE_PREFIX}{config.UNPUBLISHED_GROUP}/{config.IMG_PREVIEW_PREFIX}{self.unpub_id}{config.IMG_EXT}",
+                    f"{config.STORAGE_PREFIX}{groupid}/{config.IMG_PREVIEW_PREFIX}{data.postid}{config.IMG_EXT}"
+            )
+        except Exception as e:
+            logging.exception('cant move preview image')

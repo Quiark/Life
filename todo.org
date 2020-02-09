@@ -1,20 +1,20 @@
 * TODO Things to do in order
 
-
-- [-] actually deploy it
+- [ ] videos
+  - [ ] upload page, if mp4, puts it directly to unpublished
+- [X] actually deploy it
   - [X] add CORS to whitelist S3 only
   - [X] how does logging (not) work?
   - [X] apparently routing using /api/ and what is in rest.py doesnt match
-  - [ ] respond with full errors ? coz hard to debug
   - [X] AWS account key
   - [X] port it to 3.6 -- have to run it with that locally too .. type error
-- [ ] scripts for deploy
+- [X] scripts for deploy
       - [X] update generated config.js
       - [X] upload to S3
-- [ ] add auth to S3 images
+- [X] add auth to S3 images
 - [X] router to go to specific content
   - [ ] go to a specific content even after using a login link
-- [ ] create component for displaying image
+- [X] create component for displaying image
 - [ ] user easy creation
 - [X] user picture
 

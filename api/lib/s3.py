@@ -28,6 +28,7 @@ class S3Storage(Storage):
         if cont == None: return []
         return [self.strip_expected_prefix(path, x['Key']) for x in cont]
 
+    # already doing on-server copy using x-amz-copy-source
     def rename(self, fr: str, to: str):
         self.s3.copy_object(
                 CopySource={
@@ -72,7 +73,7 @@ class S3Storage(Storage):
 
     def gen_policy(self):
         bucket_name = config.UPLOAD_BUCKET
-        max_byte_size = 16 * 1024 * 1024
+        max_byte_size = 256 * 1024 * 1024 # 256 MB
         return [
                 { "bucket" : bucket_name },
                 #[ "starts-with", "$key", ""],

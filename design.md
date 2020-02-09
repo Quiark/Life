@@ -29,8 +29,7 @@ API served from now.sh
 
 ## Removing dependency on now.sh
 
-Perhaps could use Lambda@Edge but only JS -> maybe only a proxy to bypass api gateway?
-Can invoke other lambda either sync or async (using SNS).
+AWS now has API gateway for only 1 USD /mo
 
 # API calls
 
@@ -77,3 +76,10 @@ todo:
 
 checklist:
  * deploy/resizer/config.json needs to be updated to match config.py values, dont have / before 'storage'
+
+# Uploading videos
+
+Upload to `UPLOAD_BUCKET`, no processing and S3 move to `UNPUBLISHED_GROUP`. But still needs to have a 
+p500- prefix in order to be found.
+
+Later maybe generate a preview pic on the lambda.

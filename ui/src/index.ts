@@ -15,6 +15,7 @@ import './group-pagination'
 import './post-full'
 import './unpublished'
 import './upload'
+import './videobox'
 import { AppHeader } from './app-header'
 
 Vue.use(SureToast, {
@@ -55,6 +56,7 @@ let GroupsDisplay = Vue.component('groups-display', {
                 :show-light-box="false" 
                 :show-caption="true"
                 ref="lightbox" />
+            <videobox v-model="currentVideo" />
             <template v-if="isNotUnpublished">
                 <group-pagination v-bind:pages="groupObj.pages" 
                                 v-bind:groupid="current" 
@@ -88,7 +90,8 @@ let GroupsDisplay = Vue.component('groups-display', {
             } as Group,
             content: [] as Post[],
             user: null as User,
-            loading: false
+            loading: false,
+            currentVideo: null as string
         }
 	},
 
@@ -111,7 +114,7 @@ let GroupsDisplay = Vue.component('groups-display', {
         images: function() {
             return this.content.map((it) => ({
                 'thumb': imgurl(it.groupid, config.IMG_PREVIEW_PREFIX + it.postid + '.jpg'),
-                'src': imgurl(it.groupid, it.postid + '.jpg'),
+                'src': imgurl(it.groupid, it.postid + '.' + (it.format || 'jpg')),
                 'caption': it.text
             }))
         }
@@ -122,9 +125,7 @@ let GroupsDisplay = Vue.component('groups-display', {
 
 		this.getUser().then(function(it) {
 			vm.user = it.user
-            for (let k in it.cfcookies) {
-                document.cookie = `${ k }=${ it.cfcookies[k] };Secure`
-            }
+            vm.saveCFcookies(it)
         })
         this.getGroups().then(function(it) {
 			vm.groups = it
@@ -171,6 +172,8 @@ let GroupsDisplay = Vue.component('groups-display', {
 			let vm = this
             this.loading = true
 
+            // TODO: this.currentPage is wrong when coming from URL focused on postid
+            this.getUser().then(vm.saveCFcookies);
 			this.getContent(this.current, this.currentPage).then(function(it) {
                 vm.loading = false
                 vm.content = vm.filterContent(it)
@@ -192,7 +195,16 @@ let GroupsDisplay = Vue.component('groups-display', {
                 return
             }
             let ix = _.findIndex(this.content, (it: Post) => it.postid == evt.postid)
-            this.$refs.lightbox.showImage(ix)
+            let post = this.content[ix]
+            if (post.format == 'mp4')
+                this.currentVideo = this.images[ix].src
+            else
+                this.$refs.lightbox.showImage(ix)
+        },
+        saveCFcookies: function(payload) {
+            for (let k in payload.cfcookies) {
+                document.cookie = `${ k }=${ payload.cfcookies[k] };Secure`
+            }
         }
 	}
 })

@@ -53,6 +53,7 @@ class BetterThanBoto(object):
         return encoded_signature
 
     def custom_policy(self, url, expires_at):
+        # TODO actually it has to be by user's groups
         obj = {
             'Statement': [{
                 "Resource": url,
@@ -96,7 +97,7 @@ class BetterThanBoto(object):
 
     def create_cookies(self):
         dt = datetime.timedelta(hours=1)
-        timestamp = (datetime.datetime.utcnow() + dt).timestamp()
+        timestamp = int((datetime.datetime.utcnow() + dt).timestamp())
         return self.create_signed_cookies(
                 config.BUCKET_URL + '/storage/*',
                 config.CF_PRIVKEY_FILE, config.CF_KEYPAIR,

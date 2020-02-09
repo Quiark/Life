@@ -30,6 +30,12 @@ class TypescriptDefs:
                 return 'object'
             else:
                 raise RuntimeError('unknown type')
+        elif getattr(t, '__origin__', None) == typing.Union: #eq_origin(t, typing.Union):
+            a = t.__args__
+            if a[1] == type(None): # it's a me, Optional!
+                return self.tstypes[a[0]]
+            else:
+                raise RuntimeError('unknown type')
         else: 
             return self.tstypes[t]
 

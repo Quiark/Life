@@ -11,6 +11,7 @@ BUCKET_URL='https://life.rplasil.name'
 UPLOAD_BUCKET='life-upload'
 UPLOAD_ENDPOINT='ap-northeast-2'
 UNPUBLISHED_GROUP='keCxhEChibx-unpublished'
+DEFAULT_PUBLISH_GROUP='avz84Ok3xhPBtkoNne-family'
 
 IMG_PREVIEW_PREFIX='p500-'
 IMG_PREVIEW_SIZE=300

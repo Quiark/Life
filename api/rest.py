@@ -130,20 +130,24 @@ def get_unpublished_images():
         base.storage.get_group_path(groupid), 
         config.IMG_PREVIEW_PREFIX)
 
-    response = [{
-        'id': lstrip_if(os.path.splitext(x)[0], config.IMG_PREVIEW_PREFIX),
-        'filename': x
-        } for x in filelist]
+    response = []
+    for x in filelist:
+        name, ext = os.path.splitext(x)
+        response.append({
+            'id': lstrip_if(name, config.IMG_PREVIEW_PREFIX),
+            'format': ext.lstrip('.'),
+            'filename': x
+        })
 
     return respond(response)
 
-@app.route('/api/groups/unpublished/publish/<imageid>', methods=['POST'])
-def publish(imageid: str):
+@app.route('/api/groups/unpublished/publish/<imageid>/<ext>', methods=['POST'])
+def publish(imageid: str, ext: str):
     user_must_ingroup(config.UNPUBLISHED_GROUP)
     dat = typed_payload(PostPayload)
     user_must_ingroup(dat.groupid)
 
-    pc = PostCreatorV2(base.storage, base.db, imageid)
+    pc = PostCreatorV2(base.storage, base.db, imageid, ext)
     pc.publish(dat.groupid, dat.text)
     return respond({})
 

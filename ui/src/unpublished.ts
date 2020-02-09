@@ -10,10 +10,12 @@ class Item {
     id: string
     filename: string
     message: string
+    format: string
 
-    constructor(u: string, f: string, m: string) {
+    constructor(u: string, f: string, e: string, m: string) {
         this.id = u
         this.filename = f
+        this.format = e
         this.message = m
     }
 }
@@ -41,7 +43,7 @@ Vue.component('unpublished-item', {
     props: ['it', 'grouplist'],
 
     data: () => ({
-        sel_group: null as string
+        sel_group: config.DEFAULT_PUBLISH_GROUP
     }),
 
     computed: {
@@ -60,7 +62,7 @@ Vue.component('unpublished-item', {
                 groupid: this.sel_group,
                 text: item.message
             } as PostPayload
-            api_post(`groups/unpublished/publish/${item.id}`, post).then((resp) => {
+            api_post(`groups/unpublished/publish/${item.id}/${item.format}`, post).then((resp) => {
                 if (resp.ok) {
                     vm.$emit('published')
                 } else {
@@ -117,7 +119,7 @@ Vue.component('unpublished', {
             this.getGroups()
                 .then(this.getItems)
                 .then((it) => {
-                vm.items = _.map(it, (x) => new Item(x.id, x.filename, null))
+                vm.items = _.map(it, (x) => new Item(x.id, x.filename, x.format, null))
             })
         },
 
