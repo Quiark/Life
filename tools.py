@@ -7,7 +7,7 @@ import argparse
 
 
 parser = argparse.ArgumentParser(description='Life tooling')
-parser.add_argument('operation', type=str, choices=['dynamodb', 'ui_deploy', 'exportconfig'],
+parser.add_argument('operation', type=str, choices=['dynamodb', 'ui_deploy', 'exportconfig', 'uplambda'],
                     help='an integer for the accumulator')
 
 args = parser.parse_args()
@@ -50,6 +50,10 @@ def export_config():
 
     lib.common.export_defs('ui/src')
 
+def up_lambda():
+    subprocess.check_call('npm pack', shell=True, cwd='aws-lambda-image')
+    subprocess.check_call('aws lambda update-function-code --profile default --function-name life-imgresizer --zip-file fileb://aws-lambda-image/package.zip', shell=True)
+
 
 if args.operation == 'dynamodb':
     dynamodb()
@@ -57,3 +61,5 @@ elif args.operation == 's3_deploy':
     s3_deploy()
 elif args.operation == 'exportconfig':
     export_config()
+elif args.operation == 'uplambda':
+    up_lambda()

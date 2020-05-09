@@ -12,8 +12,8 @@ Vue.component('upload-box', {
             <input type="hidden" v-for="(fval, fkey) in fields" :name="fkey" :value="fval">
             <input type="hidden" name="acl" value="private">
 
-        <div class="fallback">
-            <div for="file">Upload picture</div>
+        <div id="uploadbox" class="fallback">
+            <label for="file" class="h2">Upload picture</label>
             <input name="file" type="file" class="button" />
             <input type="submit" class="button" value="Upload" />
          </div>
@@ -33,11 +33,15 @@ Vue.component('upload-box', {
         filename: 'tst.jpg'
     }),
 
-    mounted: function() {
-        let vm = this
-        api('upload-details').then((it) => {
-            vm.aws_s3_url = it.url
-            vm.fields = it.fields
-        })
-    }
+    methods: {
+        getTokens: function() {
+            let vm = this
+            api('upload-details').then((it) => {
+                vm.aws_s3_url = it.url
+                vm.fields = it.fields
+            })
+        }
+    },
+
+    mounted: function() { this.getTokens() }
 })

@@ -5,12 +5,13 @@ from flask import make_response
 from flask_cors import CORS
 from dataclasses import asdict, is_dataclass, dataclass
 from datetime import datetime
-from typing import Dict
+from typing import Dict, List
 import base
 import config
 from lib.data import Comment, Post, Group, User, LifeApp, PostPayload
 from lib.common import lstrip_if, display_timestamp
 from lib.posts import PostCreatorV2
+from lib.storage import UnpublishedList
 import lib.cfcookie
 
 log = logging.getLogger(None)
@@ -125,21 +126,10 @@ def get_unpublished_images():
     groupid = config.UNPUBLISHED_GROUP
     user_must_ingroup(groupid)
 
-    # TODO move to dedicated code file
-    filelist = base.storage.list_items(
-        base.storage.get_group_path(groupid), 
-        config.IMG_PREVIEW_PREFIX)
+    ulist = UnpublishedList(base.storage.list_items(
+        base.storage.get_group_path(groupid), ''))
 
-    response = []
-    for x in filelist:
-        name, ext = os.path.splitext(x)
-        response.append({
-            'id': lstrip_if(name, config.IMG_PREVIEW_PREFIX),
-            'format': ext.lstrip('.'),
-            'filename': x
-        })
-
-    return respond(response)
+    return respond(ulist.get_response())
 
 @app.route('/api/groups/unpublished/publish/<imageid>/<ext>', methods=['POST'])
 def publish(imageid: str, ext: str):

@@ -85,7 +85,7 @@ Vue.component('unpublished', {
                 </span>
                 <span>Refresh</span>
             </a>
-            <upload-box />
+            <upload-box ref="uploadbox"/>
             <unpublished-item v-for="it in items" :key="it.id" :it="it" :grouplist="grouplist" v-on:published="onItemPublished(it)" />
         </div>
     `,
@@ -116,6 +116,7 @@ Vue.component('unpublished', {
 
         refresh: function() {
             let vm = this
+            this.$refs.uploadbox.getTokens()
             this.getGroups()
                 .then(this.getItems)
                 .then((it) => {

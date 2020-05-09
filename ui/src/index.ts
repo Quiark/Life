@@ -196,7 +196,8 @@ let GroupsDisplay = Vue.component('groups-display', {
             }
             let ix = _.findIndex(this.content, (it: Post) => it.postid == evt.postid)
             let post = this.content[ix]
-            if (post.format == 'mp4')
+            let format = (post.format || 'jpg').toLowerCase()
+            if ((format == 'mp4') || (format == 'mov'))
                 this.currentVideo = this.images[ix].src
             else
                 this.$refs.lightbox.showImage(ix)
