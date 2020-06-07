@@ -22,7 +22,7 @@ class Post:
     # yes?
     text: str
     comments: List[Comment]
-    # jpg, mp4, ...
+    # jpg, mp4, mov, ...
     format: Optional[str] = None
     time: datetime = datetime.utcnow()
 

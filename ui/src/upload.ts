@@ -7,7 +7,12 @@ import { api } from './common'
 Vue.component('upload-box', {
     template: `
     <div class="card">
-        <form class="dropzone card-content" id="my-dropzone" role="form" v-bind:action="aws_s3_url" method="POST" enctype="multipart/form-data">
+        <form class="dropzone card-content" 
+              id="my-dropzone" 
+              ref="form"
+              role="form" 
+              v-bind:action="aws_s3_url" 
+              method="POST" enctype="multipart/form-data">
 
             <input type="hidden" v-for="(fval, fkey) in fields" :name="fkey" :value="fval">
             <input type="hidden" name="acl" value="private">
@@ -15,7 +20,7 @@ Vue.component('upload-box', {
         <div id="uploadbox" class="fallback">
             <label for="file" class="h2">Upload picture</label>
             <input name="file" type="file" class="button" />
-            <input type="submit" class="button" value="Upload" />
+            <input type="button" class="button" value="Upload" @click="onSubmit" />
          </div>
       </form>
 
@@ -36,12 +41,20 @@ Vue.component('upload-box', {
     methods: {
         getTokens: function() {
             let vm = this
-            api('upload-details').then((it) => {
+            return api('upload-details').then((it) => {
                 vm.aws_s3_url = it.url
                 vm.fields = it.fields
             })
-        }
-    },
+        },
 
-    mounted: function() { this.getTokens() }
+        onSubmit: function() {
+            let vm = this
+            this.getTokens().then((it) => {
+                this.$nextTick(() => {
+                    vm.$refs.form.submit()
+                })
+            })
+        }
+    }
+
 })

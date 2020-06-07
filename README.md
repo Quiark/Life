@@ -42,3 +42,6 @@ To build the zip, use this:
 `npm pack`
 
 Manually built zip cannot be used because files should have read for all permissions.
+
+After upgrading to Nodejs12 runtime, a layer with imagemagick binaries needs to be added. The
+one pre-built by the `aws-lambda-image` authors works.
