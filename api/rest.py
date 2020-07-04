@@ -145,3 +145,10 @@ def publish(imageid: str, ext: str):
 def get_upload_details():
     user_must_ingroup(config.UNPUBLISHED_GROUP)
     return respond(base.storage.get_upload_details())
+
+
+@app.route('/api/filetest', methods=['POST'])
+def file_test():
+    print(request.files)
+    request.files['file'].save('/Users/roman/temp/upload.bin')
+    return respond('ok')

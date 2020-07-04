@@ -38,7 +38,7 @@ LOCAL = True
 API_LOCAL = (os.environ.get('API_LOCAL', 'true')) == 'true'
 
 if API_LOCAL and LOCAL:
-    STORAGE_IMPL = 'local'
+    STORAGE_IMPL = 's3'
     DYNAMO_IMPL = 'aws'
 
     LOCAL_STORAGE = '/Users/roman/Devel/Life/runtime/'
