@@ -1,5 +1,6 @@
 import * as _ from "lodash";
 import * as config from './config.js'
+import { Post } from './data'
 
 
 var currentUser = {
@@ -99,7 +100,14 @@ http://life.rplasil.name.s3-website.ap-northeast-2.amazonaws.com/storage/keCxhEC
      */
 
     return start + config.STORAGE_PREFIX + groupid + '/' + name;
-    
+}
+
+export function imgurlForPost(post: Post, preview: boolean): string {
+    let prefix = ''
+    if (preview) prefix = config.IMG_PREVIEW_PREFIX
+    let format = (post.format || 'jpg')
+    if (preview) format = 'jpg'
+    return imgurl(post.groupid, prefix + post.postid + '.' + format)
 }
 
 export function rainbow_class(id: string): string {

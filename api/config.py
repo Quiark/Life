@@ -15,7 +15,7 @@ DEFAULT_PUBLISH_GROUP='avz84Ok3xhPBtkoNne-family'
 TEST_GROUP='test'
 
 IMG_PREVIEW_PREFIX='p500-'
-IMG_PREVIEW_SIZE=300
+IMG_PREVIEW_SIZE=500
 IMG_EXT='.jpg'
 VIDEO_PREVIEW_SUFFIX = '.0000000'
 
@@ -38,7 +38,7 @@ LOCAL = True
 API_LOCAL = (os.environ.get('API_LOCAL', 'true')) == 'true'
 
 if API_LOCAL and LOCAL:
-    STORAGE_IMPL = 's3'
+    STORAGE_IMPL = 'local'
     DYNAMO_IMPL = 'aws'
 
     LOCAL_STORAGE = '/Users/roman/Devel/Life/runtime/'

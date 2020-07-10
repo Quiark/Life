@@ -5,6 +5,12 @@ import 'whatwg-fetch';
 import * as config from './config.js'
 import { api } from './common'
 
+enum UploadStatus {
+    OPENING = 'OPENING',
+    UPLOADING = 'UPLOADING',
+    ERROR = 'ERROR'
+}
+
 Vue.component('upload-box', {
     template: `
     <div class="card">
@@ -13,19 +19,32 @@ Vue.component('upload-box', {
               ref="form" role="form" 
               method="POST" enctype="multipart/form-data">
 
-            <input type="hidden" v-for="(fval, fkey) in fields" :name="fkey" :value="fval">
-            <input type="hidden" name="acl" value="private">
+            <input type="hidden" v-for="(fval, fkey) in fields" :name="fkey" :value="fval" />
+            <input type="hidden" name="acl" value="private" />
+            <input type="hidden" name="key" v-bind:value="fullUploadKey" />
 
         <div id="uploadbox" class="fallback">
             <label for="file" class="h2">Upload picture</label>
             <input name="file" type="file" class="button" ref="file" @input="onFile" />
-            <input type="button" class="button" value="Upload" @click="onSubmit" />
+            <input type="button" class="button" value="Upload" @click="onSubmit" :disabled="uploadDisabled"/>
          </div>
       </form>
 
-      <div id="status" ref="status" v-if="statusLoading">
+      <div id="status" v-if="status == 'OPENING'">
         Opening ...
       </div>
+      <div id="status" v-if="status == 'ERROR'">
+        Error ....
+      </div>
+      <div id="status" v-if="status == 'UPLOADING'">
+        Uploading ....
+      </div>
+      <!--
+      file:
+      {{doneFile}}
+      preview:
+      {{donePreview}}
+      -->
 
       <video width="30" controls="true" ref="video" @loadeddata="onVideoLoaded" class="bgprocess" >
       </video>
@@ -45,8 +64,24 @@ Vue.component('upload-box', {
         toRelease: [] as string[],
         // to be able to use closure. Also used for image
         vidLoadHandler: null as ((evt) => void),
-        statusLoading: false
+        status: null as UploadStatus,  // TODO can this be derived from other props?
+        filename: null as string,
+        ext: null as string,
+        donePreview: false, // success upload of preview?
+        doneFile: false
     }),
+
+
+    // TODO need to inform when *both* thnigs are done uploading
+
+    computed: {
+        fullUploadKey: function() {
+            return `${config.STORAGE_PREFIX}/${config.UNPUBLISHED_GROUP}/${this.filename}.${this.ext}`
+        },
+        uploadDisabled: function() {
+            return (this.status == UploadStatus.OPENING) || (this.doneFile && this.donePreview)
+        }
+    },
 
     methods: {
         getTokens: function() {
@@ -61,7 +96,9 @@ Vue.component('upload-box', {
             let vm = this
             this.getTokens().then((it) => {
                 this.$nextTick(() => {
-                    vm.$refs.form.submit()
+                    vm.status = UploadStatus.UPLOADING
+                    if (!vm.donePreview) vm.uploadPreview()
+                    if (!vm.doneFile) vm.uploadFile()
                 })
             })
         },
@@ -77,7 +114,11 @@ Vue.component('upload-box', {
 
             let blobURL = URL.createObjectURL(file)
             this.toRelease.push(blobURL)
-            this.statusLoading = true
+            this.status = UploadStatus.OPENING
+            this.filename = Math.ceil(Math.random() * 1000000)
+            this.ext = file.name.split('.')[1]
+            this.doneFile = false
+            this.donePreview = false
 
             if (file.type.startsWith('image/')) {
                 this.vidLoadHandler = (event) => {
@@ -89,18 +130,11 @@ Vue.component('upload-box', {
                 this.vidLoadHandler = (event) => {
                     vm.previewOnCanvas(canvas, vid, vid.videoWidth, vid.videoHeight)
 
-                    // canvas.toBlob(onPreviewBlob, 'image/jpeg')
                 }
                 vid.src = blobURL
                 vid.load()
 
             } else return
-
-            // I don't know how to use promises so the callbacks are in reverse order
-            let onPreviewBlob = (blob) => {
-                // vm.$refs.gen.value = blob
-                vm.uploadBlob(blob)
-            }
         },
 
         previewOnCanvas: function(canvas, data, w, h) {
@@ -113,73 +147,55 @@ Vue.component('upload-box', {
         },
 
         onVideoLoaded: function(evt) {
-            console.log('loaded', evt)
             let fn = this.vidLoadHandler
             this.vidLoadHandler = null
-            console.log('cleared')
-            this.statusLoading = false
+            this.status = null
 
             if (fn != null) fn(evt)
         },
 
-        uploadBlob: function(blob) {
-            let name = Math.ceil(Math.random() * 1000000)
+        uploadPreview: function() {
+            let vm = this
+            let canvas = this.$refs.canvas
+            let onPreviewBlob = (blob) => {
+                vm.uploadBlob(blob, `p500-${this.filename}.jpg`).then((ok) => {
+                    vm.donePreview = true
+                }, (err) => {
+                    vm.donePreview = false
+                })
+            }
+            canvas.toBlob(onPreviewBlob, 'image/jpeg')
+        },
 
+        uploadFile: function() {
+            let fileEl = this.$refs.file
+            let file = fileEl.files[0]
+            let vm = this
+            this.uploadBlob(file, this.filename + '.' + this.ext).then((ok) => {
+                vm.doneFile = true
+            }, (err) => {
+                console.log('request failed', err)
+                vm.doneFile = false
+            })
+
+        },
+
+        uploadBlob: function(blob, name) {
             let formData = new FormData()
+            let vm = this
 
             let allFields = Object.assign({acl: 'private'}, this.fields)
             for (let it in allFields) {
                 formData.append(it, allFields[it])
             }
-            formData.append(`${name}.jpg`, blob)
+            formData.append('file', blob, name)
 
-            fetch(this.aws_s3_url, {
+            return fetch(this.aws_s3_url, {
                 method: 'POST',
+                mode: 'no-cors',
                 body: formData
-            })
-
-        },
-
-        uploadBase64: function(payload) {
-            let boundary = '----htdoesuibsntiskmjatiuhasind'
-            let prefix = 'data:image/jpeg;base64,'
-            let dataAscii = payload.substr(prefix.length)
-            let arr = [String.fromCharCode(127), String.fromCharCode(128), String.fromCharCode(129)]
-            // for (let i = 0; i < 1024; i++) arr[i] = String.fromCharCode(i % 255)
-            dataAscii = btoa(arr.join(''))
-            // let dataAscii = 'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww'
-            // dataAscii += 'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc'
-            // dataAscii += 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-            let name = Math.ceil(Math.random() * 100000)
-            let body = [
-                '--' + boundary,
-                `Content-Disposition: form-data; name="file"; filename="${name}.jpg"`,
-                'Content-Type: image/jpeg',
-                '',
-                atob(dataAscii),
-                '--' + boundary + '--',
-                ''
-            ]
-            let keysBody = []
-            let allFields = Object.assign({acl: 'private'}, this.fields)
-            for (let it in allFields) {
-                keysBody.push('--' + boundary)
-                keysBody.push(`Content-Disposition: form-data; name="${it}"`)
-                keysBody.push('')
-                keysBody.push(allFields[it])
-            }
-
-
-            fetch(/*this.aws_s3_url*/ 'http://localhost:7004/api/filetest', {
-                method: 'POST',
-                body: ''
-                /*
-                headers: {
-                    'Content-Type': 'multipart/form-data; boundary=' + boundary
-                },
-                body: keysBody.concat(body).join('\r\n')
-                */
-            })
+            })        
+            // note: it rejects only on network error, not on receiving 404
         }
     },
 

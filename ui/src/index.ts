@@ -9,7 +9,7 @@ import LightBox from 'vue-image-lightbox'
 
 import './styles/main.scss';
 import { Post, Group, Comment, User } from './data'
-import { imgurl, api, api_post, file_api, file_html, loginTool, toastTool } from './common'
+import { imgurl, imgurlForPost, api, api_post, file_api, file_html, loginTool, toastTool } from './common'
 import * as config from './config.js'
 import './group-pagination'
 import './post-full'
@@ -113,8 +113,8 @@ let GroupsDisplay = Vue.component('groups-display', {
         },
         images: function() {
             return this.content.map((it) => ({
-                'thumb': imgurl(it.groupid, config.IMG_PREVIEW_PREFIX + it.postid + '.jpg'),
-                'src': imgurl(it.groupid, it.postid + '.' + (it.format || 'jpg')),
+                'thumb': imgurlForPost(it, true),
+                'src': imgurlForPost(it, false),
                 'caption': it.text
             }))
         }

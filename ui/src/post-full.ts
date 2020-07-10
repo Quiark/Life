@@ -1,7 +1,7 @@
 import * as _ from "lodash"
 import Vue from "vue"
 
-import { api, api_post, file_api, file_html, rainbow_class, imgurl, loginTool } from './common'
+import { api, api_post, file_api, file_html, rainbow_class, imgurlForPost, loginTool } from './common'
 import { Post, Group, Comment, User } from './data'
 import * as config from './config.js'
 import './comment-list'
@@ -17,10 +17,15 @@ Vue.component('post-full', {
                 </div>
                 <img 
                     v-bind:width="previewSize" 
-                    v-lazy="imgurl"
+                    v-lazy="imgurlPreview"
                     @click="on_img_click"
                     />
 
+                <span class="sidebar">
+                <div class="button" >
+                    <a :href="imgurlFull" download><i class="fas fa-download"></i></a>
+                </div>
+                </span>
 				<comment-list v-bind:comments="obj.comments"/>
 				<div class="comment-writing">
                     <div class="comment-textarea">
@@ -50,8 +55,11 @@ Vue.component('post-full', {
 	},
 
     computed: {
-        imgurl: function() {
-            return imgurl(this.obj.groupid, config.IMG_PREVIEW_PREFIX + this.obj.postid + '.jpg')
+        imgurlPreview: function() {
+            return imgurlForPost(this.obj, true)
+		},
+        imgurlFull: function() {
+            return imgurlForPost(this.obj, false)
 		},
 		posturl: function() {
             // having the optional params on router makes the trailing / required
@@ -62,6 +70,9 @@ Vue.component('post-full', {
         },
         text_lines: function() {
             return this.obj.text.split(/\n/g)
+        },
+        isVideo: function() {
+            this.obj.format != 'jpg'
         }
 	},
 
