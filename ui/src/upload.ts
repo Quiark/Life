@@ -16,19 +16,16 @@ Vue.component('upload-box', {
     <div class="card">
         <form class="dropzone card-content" 
               id="my-dropzone" 
-              ref="form" role="form" 
-              method="POST" enctype="multipart/form-data">
+              ref="form" role="form" >
 
-            <input type="hidden" v-for="(fval, fkey) in fields" :name="fkey" :value="fval" />
-            <input type="hidden" name="acl" value="private" />
-            <input type="hidden" name="key" v-bind:value="fullUploadKey" />
-
-        <div id="uploadbox" class="fallback">
-            <label for="file" class="h2">Upload picture</label>
-            <input name="file" type="file" class="button" ref="file" @input="onFile" />
-            <input type="button" class="button" value="Upload" @click="onSubmit" :disabled="uploadDisabled"/>
-         </div>
+            <div id="uploadbox" class="fallback">
+                <label for="file" class="h2">Upload picture</label>
+                <input name="file" type="file" class="button" ref="file" @input="onFile" />
+                <input type="button" class="button" value="Upload" @click="onSubmit" :disabled="uploadDisabled"/>
+                <input type="button" class="button" value="preview" @click="onVideoLoaded" />
+             </div>
       </form>
+
 
       <div id="status" v-if="status == 'OPENING'">
         Opening ...
@@ -36,7 +33,7 @@ Vue.component('upload-box', {
       <div id="status" v-if="status == 'ERROR'">
         Error ....
       </div>
-      <div id="status" v-if="status == 'UPLOADING'">
+      <div id="status" v-if="(status == 'UPLOADING') && !uploadDisabled">
         Uploading ....
       </div>
       <!--
@@ -44,12 +41,14 @@ Vue.component('upload-box', {
       {{doneFile}}
       preview:
       {{donePreview}}
+      exception:
+      {{ exception }}
       -->
 
-      <video width="30" controls="true" ref="video" @loadeddata="onVideoLoaded" class="bgprocess" >
+      <video width="30" controls="true" ref="video" @loadeddata="onVideoLoaded" class="bgprocess" style="" >
       </video>
-      <img width="30" ref="loaderImg" class="bgprocess" @load="onVideoLoaded" />
-      <canvas ref="canvas" width="500">
+      <img width="30" ref="loaderImg" class="bgprocess" @load="onVideoLoaded" style=""/>
+      <canvas ref="canvas" width="500" style="">
       </canvas>
     </div>
     `,
@@ -68,16 +67,11 @@ Vue.component('upload-box', {
         filename: null as string,
         ext: null as string,
         donePreview: false, // success upload of preview?
-        doneFile: false
+        doneFile: false,
+        exception: ""
     }),
 
-
-    // TODO need to inform when *both* thnigs are done uploading
-
     computed: {
-        fullUploadKey: function() {
-            return `${config.STORAGE_PREFIX}/${config.UNPUBLISHED_GROUP}/${this.filename}.${this.ext}`
-        },
         uploadDisabled: function() {
             return (this.status == UploadStatus.OPENING) || (this.doneFile && this.donePreview)
         }
@@ -116,7 +110,8 @@ Vue.component('upload-box', {
             this.toRelease.push(blobURL)
             this.status = UploadStatus.OPENING
             this.filename = Math.ceil(Math.random() * 1000000)
-            this.ext = file.name.split('.')[1]
+            let parts = file.name.split('.')
+            this.ext = parts[parts.length - 1]
             this.doneFile = false
             this.donePreview = false
 
@@ -128,7 +123,10 @@ Vue.component('upload-box', {
 
             } else if (file.type.startsWith('video/')) {
                 this.vidLoadHandler = (event) => {
-                    vm.previewOnCanvas(canvas, vid, vid.videoWidth, vid.videoHeight)
+                    setTimeout(() => {
+                        vm.previewOnCanvas(canvas, vid, vid.videoWidth, vid.videoHeight)
+                        vm.exception += "previewOnCanvas\n"
+                    }, 500)
 
                 }
                 vid.src = blobURL
@@ -142,13 +140,34 @@ Vue.component('upload-box', {
             canvas.width = config.IMG_PREVIEW_SIZE
             canvas.height = config.IMG_PREVIEW_SIZE * ratio
 
-            let ctx = canvas.getContext('2d');
-            ctx.drawImage(data, 0, 0, canvas.width, canvas.height);
+            let ctx = canvas.getContext('2d')
+            ctx.imageSmoothingEnabled = true
+            try {
+                ctx.drawImage(data, 0, 0, canvas.width, canvas.height)
+            } catch (ex) {
+                this.exception += this.stringify(ex)
+            }
         },
 
+
+        stringify: function(obj) {
+            var result = ''
+            for (let k in obj) {
+
+                result += k
+                result += '='
+                result += obj[k]
+                result += '; '
+            }
+            return result
+
+        },
+
+        // TODO so I think the problem is this gets called too early
         onVideoLoaded: function(evt) {
+            this.exception += "onVideoLoaded\n"
             let fn = this.vidLoadHandler
-            this.vidLoadHandler = null
+            // this.vidLoadHandler = null
             this.status = null
 
             if (fn != null) fn(evt)

@@ -8,7 +8,7 @@ BUCKET_NAME='life.rplasil.name'
 BUCKET_URL='https://life.rplasil.name'
 
 # todo
-UPLOAD_BUCKET='life-upload'
+UPLOAD_BUCKET=BUCKET_NAME
 UPLOAD_ENDPOINT='ap-northeast-2'
 UNPUBLISHED_GROUP='keCxhEChibx-unpublished'
 DEFAULT_PUBLISH_GROUP='avz84Ok3xhPBtkoNne-family'
@@ -28,6 +28,8 @@ DYNAMODB_REGION = 'ap-northeast-2'
 # must end with /
 STORAGE_PREFIX = 'storage/'
 
+UPLOAD_PATH=STORAGE_PREFIX + UNPUBLISHED_GROUP + '/'
+
 # set after now deployment, only used in JS frontend
 API_BASE = 'https://life.quiark.now.sh/api/'
 
@@ -38,16 +40,16 @@ LOCAL = True
 API_LOCAL = (os.environ.get('API_LOCAL', 'true')) == 'true'
 
 if API_LOCAL and LOCAL:
-    STORAGE_IMPL = 'local'
+    STORAGE_IMPL = 's3'
     DYNAMO_IMPL = 'aws'
 
     LOCAL_STORAGE = '/Users/roman/Devel/Life/runtime/'
 
     DYNAMODB_LOCAL_PATH = '/Users/roman/Downloads'
 
-    API_BASE = 'http://localhost:7004/api/'
+    API_BASE = 'http://10.0.8.171:7004/api/'
 
-    BUCKET_URL = 'http://localhost:7709'
+    BUCKET_URL = 'http://10.0.8.171:7709'
     LOGLEVEL='INFO'
 
 else:

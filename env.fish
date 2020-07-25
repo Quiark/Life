@@ -37,12 +37,18 @@ function ui_build
     cp ui/dist/bundle.js api/bundle.js
 end
 
+function editor
+    nvim -S session.vim
+end
+
 function help_session
     echo dynamodb  // run local version of dynamodb for development
     echo notebook
     echo frontend_server
     echo api_server
     echo ui_build // build production frontend package, later deploy with now
+    echo editor
 end
+
 
 help_session

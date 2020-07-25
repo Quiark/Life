@@ -20,7 +20,10 @@ log.setLevel(getattr(logging, config.LOGLEVEL))
 logging.info('... Starting Life app server ...')
 
 app = Flask(__name__)
-CORS(app, origins=config.BUCKET_URL)
+CORS(
+        app, 
+        origins=[config.BUCKET_URL] + ['*'] if config.API_LOCAL else []
+)
 
 # --- middleware ---
 def to_popo(obj):
@@ -146,9 +149,3 @@ def get_upload_details():
     user_must_ingroup(config.UNPUBLISHED_GROUP)
     return respond(base.storage.get_upload_details())
 
-
-@app.route('/api/filetest', methods=['POST'])
-def file_test():
-    print(request.files)
-    request.files['file'].save('/Users/roman/temp/upload.bin')
-    return respond('ok')

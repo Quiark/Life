@@ -15,11 +15,16 @@ Vue.component('post-full', {
                         {{ line }}
                     </p>
                 </div>
-                <img 
-                    v-bind:width="previewSize" 
-                    v-lazy="imgurlPreview"
-                    @click="on_img_click"
-                    />
+
+                <div class="overlaycont" @click="on_img_click">
+                    <img 
+                        v-bind:width="previewSize" 
+                        v-lazy="imgurlPreview"
+                        />
+                    <div class="videoverlay" v-if="isVideo">
+                        <i class="fas fa-play"></i>
+                    </div>
+                </div>
 
                 <span class="sidebar">
                 <div class="button" >
@@ -72,7 +77,7 @@ Vue.component('post-full', {
             return this.obj.text.split(/\n/g)
         },
         isVideo: function() {
-            this.obj.format != 'jpg'
+            return (this.obj.format != 'jpg') || (this.obj.format == null)
         }
 	},
 

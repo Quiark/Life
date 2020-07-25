@@ -66,7 +66,7 @@ class S3Storage(Storage):
         #s3client = self.s3
         post = s3client.generate_presigned_post(
                 Bucket=config.UPLOAD_BUCKET,
-                Key='${filename}',
+                Key=config.UPLOAD_PATH + '${filename}',
                 Conditions=self.gen_policy()
                 )
         return post
@@ -76,7 +76,7 @@ class S3Storage(Storage):
         max_byte_size = 256 * 1024 * 1024 # 256 MB
         return [
                 { "bucket" : bucket_name },
-                #[ "starts-with", "$key", ""],
+                [ "starts-with", "$key", config.UPLOAD_PATH],
                 { "acl" : "private"},
                 [ "content-length-range", 0, max_byte_size ]
                 #{"x-amz-algorithm": "AWS4-HMAC-SHA256"}

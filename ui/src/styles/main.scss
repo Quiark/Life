@@ -172,4 +172,27 @@ img.vue-lb-modal-image {
 
 .bgprocess {
     display: none;
+    image-orientation: from-image;
+}
+
+.overlaycont {
+    position: relative;
+}
+
+.overlaycont:hover .videoverlay {
+    visibility: hidden;
+}
+
+.videoverlay {
+    font-weight: bold;
+    font-size: 400%;
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    background-color: #ffef0042;
+    color: #ff9a2f;
+    border-radius: 50%;
+    width: 2em;
+    height: 2em;
+    padding: 0.24em 0.2em 0.2em 0.66em;
 }
