@@ -1,3 +1,0 @@
-[submodule "aws-lambda-image"]
-	path = aws-lambda-image
-	url = https://github.com/ysugimoto/aws-lambda-image.git
