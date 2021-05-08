@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "vue-image-lightbox": "^6.2.0",
     "vue-lazyload": "^1.2.6",
     "vue-router": "^3.0.2",
